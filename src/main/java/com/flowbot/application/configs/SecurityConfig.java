@@ -1,5 +1,6 @@
 package com.flowbot.application.configs;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+@ConditionalOnExpression("${keycloak.enabled:true} == true")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
