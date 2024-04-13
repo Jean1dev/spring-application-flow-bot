@@ -1,6 +1,13 @@
 server:
   port: 8081
 
+keycloak:
+  enabled: true
+
+bot-builder:
+  read-timeout: 30000
+  base-url: https://bot-builder-engine-2242d70bd3b3.herokuapp.com
+
 logging:
   level:
     org:
@@ -18,7 +25,7 @@ spring:
             scope: openid, profile, email
         provider:
           keycloak:
-            issuer-uri: http://localhost:8080/realms/bot-flow
+            issuer-uri: http://localhost:8443/realms/bot-flow
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bot-flow
+          issuer-uri: http://localhost:8443/realms/bot-flow
