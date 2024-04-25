@@ -23,12 +23,8 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Deploy to Heroku
-      uses: akhileshns/heroku-deploy@v3.10.9
+      uses: akhileshns/heroku-deploy@v3.12.12
       with:
         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
         heroku_app_name: 'o-auth-managment-server'
         heroku_email: 'jeanlucafp@gmail.com'
-        usedocker: 'false'
-        dontuseforce: true
-        branch: 'main'
-        remote_branch: "main"
