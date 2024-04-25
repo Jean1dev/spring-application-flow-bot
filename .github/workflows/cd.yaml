@@ -26,7 +26,6 @@ jobs:
       uses: akhileshns/heroku-deploy@v3.10.9
       with:
         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-        heroku_app_name: 'o-auth-managment-server'
+        heroku_app_name: 'o-auth-managment-server2'
         heroku_email: 'jeanlucafp@gmail.com'
         usedocker: 'false'
-        branch: 'main'
