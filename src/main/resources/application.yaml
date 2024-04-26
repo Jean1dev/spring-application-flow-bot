@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: ${PORT:8080}
 
 keycloak:
   enabled: true
@@ -15,6 +15,10 @@ logging:
         security: DEBUG
 
 spring:
+  data:
+    mongodb:
+      uri: ${MONGO_URL:mongodb://localhost:27017/flow}
+
   security:
     oauth2:
       client:
