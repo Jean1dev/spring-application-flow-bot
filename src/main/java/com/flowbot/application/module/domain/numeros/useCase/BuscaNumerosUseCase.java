@@ -44,7 +44,7 @@ public class BuscaNumerosUseCase {
         return PageableExecutionUtils.getPage(
                 numeros,
                 pageRequest,
-                () -> mongoTemplate.count(Query.of(query), Numero.class)
+                () -> mongoTemplate.count(query, Numero.class)
         );
     }
 
