@@ -1,6 +1,6 @@
 package com.flowbot.application.module.domain.campanha.useCase;
 
-import com.flowbot.application.module.domain.UseCaseTest;
+import com.flowbot.application.UseCaseTest;
 import com.flowbot.application.module.domain.campanha.Campanha;
 import com.flowbot.application.module.domain.campanha.CampanhaMongoDBRepository;
 import com.flowbot.application.module.domain.campanha.apis.dto.CriarCampanhaRequest;

@@ -1,5 +1,6 @@
 package com.flowbot.application.module.domain.numeros;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +15,7 @@ public class Numero {
     private String id;
     private String nick;
     private String numero;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime dataCriacao;
     private StatusNumero statusNumero;
     private String whatsappInternalId;
