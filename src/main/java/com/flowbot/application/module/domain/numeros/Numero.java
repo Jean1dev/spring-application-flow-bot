@@ -57,4 +57,8 @@ public class Numero {
     public String getWhatsappInternalId() {
         return whatsappInternalId;
     }
+
+    public void atualizarStatus(final StatusNumero novoStatus) {
+        statusNumero = novoStatus;
+    }
 }

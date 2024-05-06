@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/campanha")
+@RequestMapping("/campanhas")
 public class CampanhaController {
 
     private final CriarCampanhaUseCase criarCampanhaUseCase;
