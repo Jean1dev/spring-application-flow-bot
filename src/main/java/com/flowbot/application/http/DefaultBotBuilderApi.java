@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import static com.flowbot.application.utils.HttpUtils.is5xx;
 import static com.flowbot.application.utils.HttpUtils.isNotFound;
@@ -24,6 +25,10 @@ public class DefaultBotBuilderApi implements BotBuilderApi {
 
     @Override
     public VerifyNumberResponse verificarStatusDoNumero(String id) {
+        if (Objects.isNull(id)) {
+            return new VerifyNumberResponse(false);
+        }
+
         var bodyMap = new HashMap<>();
         bodyMap.put("code", id);
 

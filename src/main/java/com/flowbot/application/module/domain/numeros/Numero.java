@@ -61,4 +61,8 @@ public class Numero {
     public void atualizarStatus(final StatusNumero novoStatus) {
         statusNumero = novoStatus;
     }
+
+    public void atualizarWhatsappInternalId(final String whatsappInternalId) {
+        this.whatsappInternalId = whatsappInternalId;
+    }
 }

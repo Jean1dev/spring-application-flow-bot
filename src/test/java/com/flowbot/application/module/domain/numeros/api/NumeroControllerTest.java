@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -15,15 +16,17 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static com.flowbot.application.module.domain.numeros.NumerosFactory.umNumero;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("NumeroController Test")
@@ -31,6 +34,9 @@ class NumeroControllerTest extends E2ETests {
 
     @Autowired
     private NumeroMongoDbRepository repository;
+
+    @MockBean
+    private ScheduledExecutorService scheduledExecutorService;
 
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
@@ -43,6 +49,26 @@ class NumeroControllerTest extends E2ETests {
     @BeforeAll
     public static void mongoIsUp() {
         assertTrue(MONGO_CONTAINER.isRunning());
+    }
+
+    @DisplayName("Deve adicionar um whatsappId no numero")
+    @Test
+    void deveAdicionarWhatsappId() throws Exception {
+        var id = repository.save(umNumero("Numero sem whatsappId")).getId();
+        var input = new HashMap<String, String>();
+        input.put("whatsappId", "whatsappId");
+
+        final var request = put("/numeros/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input));
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk());
+
+        var numero = repository.findById(id).orElseThrow();
+        assertEquals("whatsappId", numero.getWhatsappInternalId());
     }
 
     @DisplayName("Deve criar um numero com sucesso")
@@ -99,6 +125,7 @@ class NumeroControllerTest extends E2ETests {
 
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id", instanceOf(String.class)))
+                .andExpect(jsonPath("$.content[0].status", instanceOf(String.class)))
                 .andExpect(jsonPath("$.content[0].nick").value("P"))
                 .andExpect(jsonPath("$.content[1].nick").value("X"))
                 .andExpect(jsonPath("$.content[2].nick").value("A"))

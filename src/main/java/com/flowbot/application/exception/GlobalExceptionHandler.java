@@ -9,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -29,6 +30,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public final ResponseEntity<ErrorResponse> validationExceptionHandler(ValidationException ex, WebRequest req) {
+        return defaultHanlder(ex, req);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public final ResponseEntity<ErrorResponse> noSuchElementExceptionHandler(NoSuchElementException ex, WebRequest req) {
         return defaultHanlder(ex, req);
     }
 }

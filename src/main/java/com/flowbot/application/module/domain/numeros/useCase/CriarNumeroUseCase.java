@@ -21,7 +21,7 @@ public class CriarNumeroUseCase {
                 null,
                 null,
                 dto.numero(),
-                null
+                dto.whatsappId()
         );
 
         return repository.save(numero);

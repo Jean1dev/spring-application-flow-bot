@@ -1,10 +1,12 @@
 package com.flowbot.application.module.domain.numeros.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.flowbot.application.module.domain.numeros.Numero;
 import com.flowbot.application.module.domain.numeros.api.dto.CriarNovoNumeroDto;
 import com.flowbot.application.module.domain.numeros.api.dto.DtoUtils;
 import com.flowbot.application.module.domain.numeros.api.dto.NumeroOutput;
 import com.flowbot.application.module.domain.numeros.api.filter.GetNumerosFilter;
+import com.flowbot.application.module.domain.numeros.useCase.AdicionarNovoWhatsappIdUseCase;
 import com.flowbot.application.module.domain.numeros.useCase.BuscaNumerosUseCase;
 import com.flowbot.application.module.domain.numeros.useCase.CriarNumeroUseCase;
 import com.flowbot.application.module.domain.numeros.useCase.ValidarNumeroUseCase;
@@ -24,15 +26,25 @@ public class NumeroController {
     private final BuscaNumerosUseCase buscaNumerosUseCase;
     private final ValidarNumeroUseCase validarNumeroUseCase;
     private final ScheduledExecutorService scheduledExecutorService;
+    private final AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase;
 
     public NumeroController(
             CriarNumeroUseCase criarNumeroUseCase,
             BuscaNumerosUseCase buscaNumerosUseCase,
-            ValidarNumeroUseCase validarNumeroUseCase, ScheduledExecutorService scheduledExecutorService) {
+            ValidarNumeroUseCase validarNumeroUseCase,
+            ScheduledExecutorService scheduledExecutorService,
+            AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase) {
         this.criarNumeroUseCase = criarNumeroUseCase;
         this.buscaNumerosUseCase = buscaNumerosUseCase;
         this.validarNumeroUseCase = validarNumeroUseCase;
         this.scheduledExecutorService = scheduledExecutorService;
+        this.adicionarNovoWhatsappIdUseCase = adicionarNovoWhatsappIdUseCase;
+    }
+
+    @PutMapping("/{id}")
+    public void adicionarNovoWhatsappId(@PathVariable String id, @RequestBody JsonNode body) {
+        var whatsappId = body.get("whatsappId").asText();
+        adicionarNovoWhatsappIdUseCase.execute(id, whatsappId);
     }
 
     @PostMapping("/validar/{id}")
