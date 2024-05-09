@@ -1,17 +1,14 @@
 package com.flowbot.application;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
-@Component
 public class Example {
 
     private final RestClient restClient;
@@ -24,7 +21,6 @@ public class Example {
         this.restClient = restClient;
     }
 
-    @PostConstruct
     public void run() {
         shouldBeMakeSuccesfullyApiCall().join();
     }

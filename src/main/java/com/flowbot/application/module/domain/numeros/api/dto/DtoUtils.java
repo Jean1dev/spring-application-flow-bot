@@ -23,7 +23,8 @@ public final class DtoUtils {
         return new NumeroOutput(
                 numero.getId(),
                 numero.getNick(),
-                numero.getNumero()
+                numero.getNumero(),
+                numero.getStatusNumero().toString()
         );
     }
 }

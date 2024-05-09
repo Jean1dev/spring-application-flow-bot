@@ -9,7 +9,7 @@ public final class NumerosFactory {
                 null,
                 null,
                 "numero",
-                null
+                "whatsappInternalId"
         );
     }
 
@@ -19,6 +19,17 @@ public final class NumerosFactory {
                 nick,
                 null,
                 null,
+                "numero",
+                null
+        );
+    }
+
+    public static Numero umNumero(StatusNumero statusNumero) {
+        return new Numero(
+                null,
+                "nick",
+                null,
+                statusNumero,
                 "numero",
                 null
         );
