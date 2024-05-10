@@ -1,18 +1,35 @@
 package com.flowbot.application.module.security;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.flowbot.application.SecurityTests;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.utility.DockerImageName;
 
-import java.net.URISyntaxException;
-
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("Testes de seguranca da aplicacao")
 public class AuthTests extends SecurityTests {
+
+    @Container
+    public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
+
+    @DynamicPropertySource
+    public static void mongoDbProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.uri", MONGO_CONTAINER::getReplicaSetUrl);
+    }
+
+    @BeforeAll
+    static void setUp() {
+        assertTrue(MONGO_CONTAINER.isRunning());
+    }
 
     @Test
     @DisplayName("Nao deve permitir acessar os recursos pq nao esta autorizado")
@@ -32,20 +49,11 @@ public class AuthTests extends SecurityTests {
         final var request = get("/numeros")
                 .param("sortByNewest", "true")
                 .param("terms", "teste")
-                .with(req -> {
-                    req.addHeader("Authorization", "Bearer " + token);
-                    return req;
-                });
+                .with(req -> SecurityTests.setTokenOnHeader(req, token));
 
         final var response = this.mvc.perform(request)
                 .andDo(print());
 
         response.andExpect(status().isOk());
-    }
-
-    @Test
-    void vapo() throws URISyntaxException, JsonProcessingException {
-        String userAndGetToken = super.createUserAndGetToken("jena", "jean");
-        System.out.println(userAndGetToken);
     }
 }

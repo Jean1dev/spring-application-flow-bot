@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -46,8 +47,14 @@ public abstract class SecurityTests {
 
     @DynamicPropertySource
     static void registerResourceServerIssuerProperty(DynamicPropertyRegistry registry) {
+        registry.add("spring.security.oauth2.client.provider.keycloak.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/tests-realm");
         registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/tests-realm");
         registry.add("keycloak.enabled", () -> true);
+    }
+
+    protected static MockHttpServletRequest setTokenOnHeader(MockHttpServletRequest request, String token) {
+        request.addHeader("Authorization", "Bearer " + token);
+        return request;
     }
 
     protected String getAcessToken() throws URISyntaxException {
