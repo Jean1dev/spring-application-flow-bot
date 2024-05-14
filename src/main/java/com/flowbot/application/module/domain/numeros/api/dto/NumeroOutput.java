@@ -4,6 +4,7 @@ public record NumeroOutput(
         String id,
         String nick,
         String numero,
-        String status
+        String status,
+        String createdAt
 ) {
 }
