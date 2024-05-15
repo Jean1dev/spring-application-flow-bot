@@ -126,6 +126,7 @@ class NumeroControllerTest extends E2ETests {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id", instanceOf(String.class)))
                 .andExpect(jsonPath("$.content[0].status", instanceOf(String.class)))
+                .andExpect(jsonPath("$.content[0].createdAt", instanceOf(String.class)))
                 .andExpect(jsonPath("$.content[0].nick").value("P"))
                 .andExpect(jsonPath("$.content[1].nick").value("X"))
                 .andExpect(jsonPath("$.content[2].nick").value("A"))

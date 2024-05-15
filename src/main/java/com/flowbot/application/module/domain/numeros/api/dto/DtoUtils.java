@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static com.flowbot.application.utils.Utils.calculateElapsedTime;
+
 public final class DtoUtils {
 
     public static Page<NumeroOutput> toDto(Page<Numero> page) {
@@ -24,7 +26,8 @@ public final class DtoUtils {
                 numero.getId(),
                 numero.getNick(),
                 numero.getNumero(),
-                numero.getStatusNumero().toString()
+                numero.getStatusNumero().toString(),
+                calculateElapsedTime(numero.getDataCriacao())
         );
     }
 }
