@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -29,6 +30,10 @@ public class BuscaNumerosUseCase {
     public Numero buscaPorId(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ValidationException("Numero não encontrado"));
+    }
+
+    public List<Numero> buscaTodos() {
+        return repository.findAll();
     }
 
     public Page<Numero> buscaPadrao(
