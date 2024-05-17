@@ -213,7 +213,8 @@ class NumeroControllerTest extends E2ETests {
                 umNumero("NIck 001"),
                 umNumero("NIck 004"),
                 umNumero("NIck 003"),
-                umNumero("Primeiro")
+                umNumero("Primeiro"),
+                umNumero("n")
         ));
 
         final var request = get("/numeros/simplificado")
@@ -226,6 +227,7 @@ class NumeroControllerTest extends E2ETests {
                 .andExpect(jsonPath("$.[0].descricao").value("NIck -numero"))
                 .andExpect(jsonPath("$.[1].descricao").value("NIck -numero"))
                 .andExpect(jsonPath("$.[2].descricao").value("NIck -numero"))
-                .andExpect(jsonPath("$.[3].descricao").value("Prime-numero"));
+                .andExpect(jsonPath("$.[3].descricao").value("Prime-numero"))
+                .andExpect(jsonPath("$.[4].descricao").value("n-numero"));
     }
 }

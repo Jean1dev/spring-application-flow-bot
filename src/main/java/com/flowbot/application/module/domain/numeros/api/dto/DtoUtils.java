@@ -22,7 +22,13 @@ public final class DtoUtils {
     }
 
     private static NumeroSimplificadoOutput simplificadoToObject(Numero numero) {
-        var novaDescricao = numero.getNick().substring(0, 5) + "-" + numero.getNumero();
+        String novaDescricao;
+        if (numero.getNick().length() < 6) {
+            novaDescricao = numero.getNick() + "-" + numero.getNumero();
+        } else {
+            novaDescricao = numero.getNick().substring(0, 5) + "-" + numero.getNumero();
+        }
+
         return new NumeroSimplificadoOutput(
                 numero.getId(),
                 novaDescricao
