@@ -209,6 +209,7 @@ class NumeroControllerTest extends E2ETests {
     @DisplayName("Deve fazer uma busca simplificada")
     @Test
     void buscaSimplificada() throws Exception {
+        repository.deleteAll();
         repository.saveAll(List.of(
                 umNumero("NIck 001"),
                 umNumero("NIck 004"),
