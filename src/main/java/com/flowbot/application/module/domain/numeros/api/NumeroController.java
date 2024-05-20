@@ -5,6 +5,7 @@ import com.flowbot.application.module.domain.numeros.Numero;
 import com.flowbot.application.module.domain.numeros.api.dto.CriarNovoNumeroDto;
 import com.flowbot.application.module.domain.numeros.api.dto.DtoUtils;
 import com.flowbot.application.module.domain.numeros.api.dto.NumeroOutput;
+import com.flowbot.application.module.domain.numeros.api.dto.NumeroSimplificadoOutput;
 import com.flowbot.application.module.domain.numeros.api.filter.GetNumerosFilter;
 import com.flowbot.application.module.domain.numeros.useCase.AdicionarNovoWhatsappIdUseCase;
 import com.flowbot.application.module.domain.numeros.useCase.BuscaNumerosUseCase;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -73,6 +75,12 @@ public class NumeroController {
             @RequestParam(defaultValue = "5") int size
     ) {
         return DtoUtils.toDto(buscaNumerosUseCase.buscaPadrao(filter, page, size));
+    }
+
+    @GetMapping("/simplificado")
+    public List<NumeroSimplificadoOutput> listarSimplificado(
+    ) {
+        return DtoUtils.listToDtoSimplificado(buscaNumerosUseCase.buscaTodos());
     }
 
     @GetMapping("/{id}")

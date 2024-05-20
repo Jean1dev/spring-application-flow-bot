@@ -205,4 +205,30 @@ class NumeroControllerTest extends E2ETests {
                 .andExpect(jsonPath("$.numberOfElements").value(is(0)))
                 .andExpect(jsonPath("$.content").isEmpty());
     }
+
+    @DisplayName("Deve fazer uma busca simplificada")
+    @Test
+    void buscaSimplificada() throws Exception {
+        repository.deleteAll();
+        repository.saveAll(List.of(
+                umNumero("NIck 001"),
+                umNumero("NIck 004"),
+                umNumero("NIck 003"),
+                umNumero("Primeiro"),
+                umNumero("n")
+        ));
+
+        final var request = get("/numeros/simplificado")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].descricao").value("NIck -numero"))
+                .andExpect(jsonPath("$.[1].descricao").value("NIck -numero"))
+                .andExpect(jsonPath("$.[2].descricao").value("NIck -numero"))
+                .andExpect(jsonPath("$.[3].descricao").value("Prime-numero"))
+                .andExpect(jsonPath("$.[4].descricao").value("n-numero"));
+    }
 }

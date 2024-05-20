@@ -17,6 +17,24 @@ public final class DtoUtils {
         return new PageImpl<>(content, pageable, page.getTotalElements());
     }
 
+    public static List<NumeroSimplificadoOutput> listToDtoSimplificado(List<Numero> content) {
+        return content.stream().map(DtoUtils::simplificadoToObject).toList();
+    }
+
+    private static NumeroSimplificadoOutput simplificadoToObject(Numero numero) {
+        String novaDescricao;
+        if (numero.getNick().length() < 6) {
+            novaDescricao = numero.getNick() + "-" + numero.getNumero();
+        } else {
+            novaDescricao = numero.getNick().substring(0, 5) + "-" + numero.getNumero();
+        }
+
+        return new NumeroSimplificadoOutput(
+                numero.getId(),
+                novaDescricao
+        );
+    }
+
     private static List<NumeroOutput> listToDto(List<Numero> content) {
         return content.stream().map(DtoUtils::toObject).toList();
     }
