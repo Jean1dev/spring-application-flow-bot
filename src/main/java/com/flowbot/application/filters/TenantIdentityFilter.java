@@ -37,7 +37,14 @@ public class TenantIdentityFilter extends OncePerRequestFilter {
         String resourceOwner = extractResourceOwner((Jwt) principal);
         logger.info(String.format("Identified resource owner: %s", resourceOwner));
 
-        TenantThreads.setTenantId(resourceOwner);
+        TenantThreads.setTenantId(setTenant(resourceOwner));
+    }
+
+    private String setTenant(String resourceOwner) {
+        var length = resourceOwner.length();
+        var primeiras4caracteres = resourceOwner.substring(0, 4);
+        var ultimas4caracteres = resourceOwner.substring(length - 4);
+        return primeiras4caracteres + ultimas4caracteres;
     }
 
     private String extractResourceOwner(final Jwt jwt) {
