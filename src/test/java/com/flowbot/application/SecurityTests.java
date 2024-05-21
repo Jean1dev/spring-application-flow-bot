@@ -41,6 +41,8 @@ public abstract class SecurityTests {
     protected static KeycloakContainer keycloakContainer;
 
     static {
+        System.setProperty("KC_CLIENT_ID", "KC_CLIENT_ID");
+        System.setProperty("KC_CLIENT_SECRET", "KC_CLIENT_SECRET");
         keycloakContainer = new KeycloakContainer().withRealmImportFile("config/kc-realm.json");
         keycloakContainer.start();
     }
@@ -49,6 +51,7 @@ public abstract class SecurityTests {
     static void registerResourceServerIssuerProperty(DynamicPropertyRegistry registry) {
         registry.add("spring.security.oauth2.client.provider.keycloak.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/tests-realm");
         registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/tests-realm");
+        registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", () -> keycloakContainer.getAuthServerUrl() + "/realms/tests-realm/protocol/openid-connect/certs");
         registry.add("keycloak.enabled", () -> true);
     }
 
