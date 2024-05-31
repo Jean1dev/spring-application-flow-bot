@@ -65,4 +65,11 @@ public class Numero {
     public void atualizarWhatsappInternalId(final String whatsappInternalId) {
         this.whatsappInternalId = whatsappInternalId;
     }
+
+    public void atualizarNumero(final String numero, final String nick) {
+        this.whatsappInternalId = null;
+        this.numero = numero;
+        this.nick = nick;
+        this.statusNumero = StatusNumero.PENDENTE;
+    }
 }

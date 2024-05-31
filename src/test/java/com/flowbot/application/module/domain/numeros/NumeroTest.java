@@ -19,4 +19,17 @@ class NumeroTest {
         assertNull(numero.getWhatsappInternalId());
     }
 
+    @Test
+    void deveAtualizarCorretamente() {
+        var numero = new Numero(null, "nick", null, StatusNumero.BANIDO, "558890809809", "foiwehfow");
+        numero.atualizarNumero("558890809809", "internalId");
+
+        assertEquals(numero.getNick(), "internalId");
+        assertEquals(numero.getNumero(), "558890809809");
+        assertNull(numero.getId());
+        assertEquals(StatusNumero.PENDENTE, numero.getStatusNumero());
+        assertNotNull(numero.getDataCriacao());
+        assertNull(numero.getWhatsappInternalId());
+    }
+
 }
