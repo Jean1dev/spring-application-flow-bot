@@ -2,17 +2,12 @@ package com.flowbot.application.module.domain.numeros.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.flowbot.application.module.domain.numeros.Numero;
-import com.flowbot.application.module.domain.numeros.api.dto.CriarNovoNumeroDto;
-import com.flowbot.application.module.domain.numeros.api.dto.DtoUtils;
-import com.flowbot.application.module.domain.numeros.api.dto.NumeroOutput;
-import com.flowbot.application.module.domain.numeros.api.dto.NumeroSimplificadoOutput;
+import com.flowbot.application.module.domain.numeros.api.dto.*;
 import com.flowbot.application.module.domain.numeros.api.filter.GetNumerosFilter;
-import com.flowbot.application.module.domain.numeros.useCase.AdicionarNovoWhatsappIdUseCase;
-import com.flowbot.application.module.domain.numeros.useCase.BuscaNumerosUseCase;
-import com.flowbot.application.module.domain.numeros.useCase.CriarNumeroUseCase;
-import com.flowbot.application.module.domain.numeros.useCase.ValidarNumeroUseCase;
+import com.flowbot.application.module.domain.numeros.useCase.*;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,18 +24,21 @@ public class NumeroController {
     private final ValidarNumeroUseCase validarNumeroUseCase;
     private final ScheduledExecutorService scheduledExecutorService;
     private final AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase;
+    private final AtualizarNumeroUseCase atualizarNumeroUseCase;
 
     public NumeroController(
             CriarNumeroUseCase criarNumeroUseCase,
             BuscaNumerosUseCase buscaNumerosUseCase,
             ValidarNumeroUseCase validarNumeroUseCase,
             ScheduledExecutorService scheduledExecutorService,
-            AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase) {
+            AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase,
+            AtualizarNumeroUseCase atualizarNumeroUseCase) {
         this.criarNumeroUseCase = criarNumeroUseCase;
         this.buscaNumerosUseCase = buscaNumerosUseCase;
         this.validarNumeroUseCase = validarNumeroUseCase;
         this.scheduledExecutorService = scheduledExecutorService;
         this.adicionarNovoWhatsappIdUseCase = adicionarNovoWhatsappIdUseCase;
+        this.atualizarNumeroUseCase = atualizarNumeroUseCase;
     }
 
     @PutMapping("/{id}")
@@ -52,6 +50,16 @@ public class NumeroController {
     @PostMapping("/validar/{id}")
     public void validarNumero(@PathVariable String id) {
         validarNumeroUseCase.execute(id);
+    }
+
+    @PutMapping("atualizar/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void atualizarNumero(@PathVariable String id, @RequestBody AtualizarNumeroInput input) {
+        atualizarNumeroUseCase.execute(id, input);
+
+        scheduledExecutorService.schedule(
+                () -> validarNumeroUseCase.execute(id),
+                30, TimeUnit.SECONDS);
     }
 
     @PostMapping

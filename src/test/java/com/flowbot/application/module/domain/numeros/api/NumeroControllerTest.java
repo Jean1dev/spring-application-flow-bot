@@ -2,6 +2,7 @@ package com.flowbot.application.module.domain.numeros.api;
 
 import com.flowbot.application.E2ETests;
 import com.flowbot.application.module.domain.numeros.NumeroMongoDbRepository;
+import com.flowbot.application.module.domain.numeros.api.dto.AtualizarNumeroInput;
 import com.flowbot.application.module.domain.numeros.api.dto.CriarNovoNumeroDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -85,6 +86,22 @@ class NumeroControllerTest extends E2ETests {
         response.andExpect(status().isOk());
         // validate if response.headers contains property id
         assertNotNull(response.andReturn().getResponse().getHeader("id"));
+    }
+
+    @DisplayName("Deve atualizar um numero com sucesso")
+    @Test
+    void deveAtualizarNumero() throws Exception {
+        final var numero = repository.save(umNumero("P"));
+        final var input = new AtualizarNumeroInput("4899844", "novo nick");
+
+        final var request = put("/numeros/atualizar/" + numero.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input));
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isNoContent());
     }
 
     @DisplayName("Deve buscar um registro por Id")
