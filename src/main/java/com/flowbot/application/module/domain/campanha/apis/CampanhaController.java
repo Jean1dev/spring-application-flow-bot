@@ -27,6 +27,7 @@ public class CampanhaController {
         HttpHeaders headers = new HttpHeaders();
 
         headers.add("id", campanha.getId());
+        headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "id");
         return ResponseEntity.ok().headers(headers).build();
     }
 
