@@ -1,5 +1,8 @@
 package com.flowbot.application.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flowbot.application.http.dtos.BatchSendResponse;
 import com.flowbot.application.http.dtos.VerifyNumberResponse;
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.flowbot.application.utils.HttpUtils.is5xx;
@@ -18,9 +22,11 @@ import static com.flowbot.application.utils.HttpUtils.isNotFound;
 public class DefaultBotBuilderApi implements BotBuilderApi {
     private static final Logger log = LoggerFactory.getLogger(DefaultBotBuilderApi.class);
     private final RestClient restClient;
+    private final ObjectMapper mapper;
 
-    public DefaultBotBuilderApi(RestClient restClient) {
+    public DefaultBotBuilderApi(RestClient restClient, ObjectMapper mapper) {
         this.restClient = restClient;
+        this.mapper = mapper;
     }
 
     @Override
@@ -42,6 +48,24 @@ public class DefaultBotBuilderApi implements BotBuilderApi {
 
         var body = responseSpec.body(VerifyNumberResponse.class);
         return body;
+    }
+
+    @Override
+    public BatchSendResponse batchSend(Map<String, Object> payload) {
+        try {
+            var responseSpec = restClient.post()
+                    .uri("/poc/whats/batch-send")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(mapper.writeValueAsString(payload))
+                    .retrieve()
+                    .onStatus(is5xx, a5xxHandler(""))
+                    .onStatus(isNotFound, notFoundHandler("def 1", "def 2"));
+
+            var body = responseSpec.body(String.class);
+            return new BatchSendResponse(body);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private RestClient.ResponseSpec.ErrorHandler notFoundHandler(final String... args) {
