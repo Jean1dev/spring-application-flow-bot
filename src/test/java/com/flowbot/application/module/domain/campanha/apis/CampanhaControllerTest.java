@@ -18,11 +18,15 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
+import java.util.List;
+
 import static com.flowbot.application.module.domain.campanha.CampanhaFactory.umaCampanha;
 import static com.flowbot.application.module.domain.numeros.NumerosFactory.umNumero;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -68,5 +72,28 @@ class CampanhaControllerTest extends E2ETests {
         response
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.executionID").value("execID"));
+    }
+
+    @Test
+    @DisplayName("Teste de busca todos")
+    void buscarTodos() throws Exception {
+        campanhaMongoDBRepository.deleteAll();
+        campanhaMongoDBRepository.saveAll(List.of(
+                umaCampanha(),
+                umaCampanha(numeroMongoDbRepository.save(umNumero(StatusNumero.VALIDADO)).getId())
+        ));
+
+        final var request = get("/campanhas")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numberOfElements").value(is(2)))
+                .andExpect(jsonPath("$.content[0].id").isNotEmpty())
+                .andExpect(jsonPath("$.content[0].numero").value(is("sem numero")))
+                .andExpect(jsonPath("$.content[1].numero").value(is("numero")));
     }
 }
