@@ -10,7 +10,7 @@ keycloak:
 
 bot-builder:
   read-timeout: 30000
-  base-url: http://localhost:8081
+  base-url: https://bot-builder-engine-2242d70bd3b3.herokuapp.com
 
 logging:
   level:
