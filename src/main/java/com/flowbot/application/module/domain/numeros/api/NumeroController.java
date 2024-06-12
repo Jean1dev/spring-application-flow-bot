@@ -5,6 +5,7 @@ import com.flowbot.application.module.domain.numeros.Numero;
 import com.flowbot.application.module.domain.numeros.api.dto.*;
 import com.flowbot.application.module.domain.numeros.api.filter.GetNumerosFilter;
 import com.flowbot.application.module.domain.numeros.useCase.*;
+import com.flowbot.application.shared.ApplicationScheduleService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -22,7 +22,7 @@ public class NumeroController {
     private final CriarNumeroUseCase criarNumeroUseCase;
     private final BuscaNumerosUseCase buscaNumerosUseCase;
     private final ValidarNumeroUseCase validarNumeroUseCase;
-    private final ScheduledExecutorService scheduledExecutorService;
+    private final ApplicationScheduleService scheduledExecutorService;
     private final AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase;
     private final AtualizarNumeroUseCase atualizarNumeroUseCase;
 
@@ -30,7 +30,7 @@ public class NumeroController {
             CriarNumeroUseCase criarNumeroUseCase,
             BuscaNumerosUseCase buscaNumerosUseCase,
             ValidarNumeroUseCase validarNumeroUseCase,
-            ScheduledExecutorService scheduledExecutorService,
+            ApplicationScheduleService scheduledExecutorService,
             AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase,
             AtualizarNumeroUseCase atualizarNumeroUseCase) {
         this.criarNumeroUseCase = criarNumeroUseCase;

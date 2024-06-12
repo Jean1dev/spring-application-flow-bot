@@ -1,7 +1,6 @@
 package com.flowbot.application.module.domain.campanha.apis;
 
 import com.flowbot.application.E2ETests;
-import com.flowbot.application.http.BotBuilderApi;
 import com.flowbot.application.http.dtos.BatchSendResponse;
 import com.flowbot.application.module.domain.campanha.CampanhaMongoDBRepository;
 import com.flowbot.application.module.domain.numeros.NumeroMongoDbRepository;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -38,8 +36,6 @@ class CampanhaControllerTest extends E2ETests {
     private NumeroMongoDbRepository numeroMongoDbRepository;
     @Autowired
     private CampanhaMongoDBRepository campanhaMongoDBRepository;
-    @MockBean
-    private BotBuilderApi botBuilderApi;
 
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
