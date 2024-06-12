@@ -10,4 +10,6 @@ public interface BotBuilderApi {
     VerifyNumberResponse verificarStatusDoNumero(final String id);
 
     BatchSendResponse batchSend(Map<String, Object> payload);
+
+    boolean playground(Map<String, Object> payload);
 }

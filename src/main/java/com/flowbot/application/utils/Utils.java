@@ -40,4 +40,16 @@ public final class Utils {
 
         return "Agora";
     }
+
+    public static String generateWhatsappId(int length) {
+        StringBuilder sb = new StringBuilder();
+        String characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        for (int i = 0; i < length; i++) {
+            int index = (int) (Math.random() * characters.length());
+            sb.append(characters.charAt(index));
+        }
+
+        return sb.toString();
+    }
 }

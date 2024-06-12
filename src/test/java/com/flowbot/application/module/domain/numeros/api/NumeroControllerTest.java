@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -19,7 +18,6 @@ import org.testcontainers.utility.DockerImageName;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 
 import static com.flowbot.application.module.domain.numeros.NumerosFactory.umNumero;
 import static org.hamcrest.Matchers.instanceOf;
@@ -35,9 +33,6 @@ class NumeroControllerTest extends E2ETests {
 
     @Autowired
     private NumeroMongoDbRepository repository;
-
-    @MockBean
-    private ScheduledExecutorService scheduledExecutorService;
 
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));

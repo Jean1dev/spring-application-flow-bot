@@ -68,6 +68,25 @@ public class DefaultBotBuilderApi implements BotBuilderApi {
         }
     }
 
+    @Override
+    public boolean playground(Map<String, Object> payload) {
+        try {
+            var responseSpec = restClient.post()
+                    .uri("/poc/whats/playground-send")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(mapper.writeValueAsString(payload))
+                    .retrieve()
+                    .onStatus(is5xx, a5xxHandler(""))
+                    .onStatus(isNotFound, notFoundHandler("def 1", "def 2"));
+
+            var body = responseSpec.body(Map.class);
+            boolean success = (boolean) body.get("success");
+            return success;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private RestClient.ResponseSpec.ErrorHandler notFoundHandler(final String... args) {
         return (req, res) -> {
             log.error(req.getURI().toString());
