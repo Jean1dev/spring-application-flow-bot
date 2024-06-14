@@ -12,6 +12,8 @@ public final class CampanhaFactory {
                 null,
                 CategoriaCampanha.AVISO,
                 null,
+                null,
+                null,
                 null
         );
     }
@@ -24,6 +26,8 @@ public final class CampanhaFactory {
                 numeros,
                 CategoriaCampanha.AVISO,
                 null,
+                null,
+                "null",
                 null
         );
     }
@@ -36,6 +40,8 @@ public final class CampanhaFactory {
                 List.of("num1", "num2"),
                 CategoriaCampanha.AVISO,
                 null,
+                null,
+                "mensagem qualquer",
                 null
         );
     }

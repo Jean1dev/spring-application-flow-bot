@@ -7,6 +7,8 @@ public record CriarCampanhaRequest(
         String numeroIdRef,
         List<String> numerosParaDisparo,
         String categoria,
-        List<String> arquivosUrls
+        List<String> arquivosUrls,
+        String messageDisparo,
+        String flowIdRef
 ) {
 }

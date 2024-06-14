@@ -7,6 +7,7 @@ import com.flowbot.application.module.domain.campanha.apis.dto.CriarCampanhaRequ
 import com.flowbot.application.module.domain.campanha.useCase.BuscaCampanhaUseCase;
 import com.flowbot.application.module.domain.campanha.useCase.CriarCampanhaUseCase;
 import com.flowbot.application.module.domain.campanha.useCase.IniciarDisparosUseCase;
+import com.flowbot.application.module.domain.campanha.useCase.RemoverCampanhaUseCase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,13 +22,22 @@ public class CampanhaController {
     private final CriarCampanhaUseCase criarCampanhaUseCase;
     private final IniciarDisparosUseCase iniciarDisparosUseCase;
     private final BuscaCampanhaUseCase buscaCampanhaUseCase;
+    private final RemoverCampanhaUseCase removerCampanhaUseCase;
 
     public CampanhaController(CriarCampanhaUseCase criarCampanhaUseCase,
                               IniciarDisparosUseCase iniciarDisparosUseCase,
-                              BuscaCampanhaUseCase buscaCampanhaUseCase) {
+                              BuscaCampanhaUseCase buscaCampanhaUseCase,
+                              RemoverCampanhaUseCase removerCampanhaUseCase) {
         this.criarCampanhaUseCase = criarCampanhaUseCase;
         this.iniciarDisparosUseCase = iniciarDisparosUseCase;
         this.buscaCampanhaUseCase = buscaCampanhaUseCase;
+        this.removerCampanhaUseCase = removerCampanhaUseCase;
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removerCampanha(@PathVariable String id) {
+        removerCampanhaUseCase.execute(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

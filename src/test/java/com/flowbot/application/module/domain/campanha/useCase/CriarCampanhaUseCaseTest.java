@@ -31,7 +31,9 @@ class CriarCampanhaUseCaseTest extends UseCaseTest {
                 "numeroIdRef",
                 Arrays.asList("numerosParaDisparo"),
                 "AVISO",
-                Arrays.asList("arquivo1", "arquivo2")
+                Arrays.asList("arquivo1", "arquivo2"),
+                null,
+                null
         );
 
         final var campanha = umaCampanha();
@@ -48,7 +50,9 @@ class CriarCampanhaUseCaseTest extends UseCaseTest {
                 "numeroIdRef",
                 Arrays.asList("numerosParaDisparo"),
                 "Enum Nao valido",
-                Arrays.asList("arquivo1", "arquivo2")
+                Arrays.asList("arquivo1", "arquivo2"),
+                null,
+                null
         );
 
         assertThrows(IllegalArgumentException.class, () -> criarCampanhaUseCase.execute(request));
@@ -61,7 +65,9 @@ class CriarCampanhaUseCaseTest extends UseCaseTest {
                 "numeroIdRef",
                 Arrays.asList("numerosParaDisparo"),
                 "OUTROS",
-                Arrays.asList("arquivo1", "arquivo2")
+                Arrays.asList("arquivo1", "arquivo2"),
+                null,
+                null
         );
 
         assertThrows(ValidationException.class, () -> criarCampanhaUseCase.execute(request));
@@ -71,7 +77,9 @@ class CriarCampanhaUseCaseTest extends UseCaseTest {
                 "numeroIdRef",
                 Arrays.asList("numerosParaDisparo"),
                 "OUTROS",
-                Arrays.asList("arquivo1", "arquivo2")
+                Arrays.asList("arquivo1", "arquivo2"),
+                null,
+                null
         );
 
         assertThrows(ValidationException.class, () -> criarCampanhaUseCase.execute(request2));

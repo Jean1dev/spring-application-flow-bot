@@ -17,9 +17,13 @@ class CampanhaTest {
                 null,
                 CategoriaCampanha.AVISO,
                 null,
-                null
+                null,
+                "MEnsagem de disparo QUalqwur",
+                "Flow Qualquer"
         );
         assertNotNull(campanha);
+        assertEquals("MEnsagem de disparo QUalqwur", campanha.getMessageDisparo());
+        assertEquals("Flow Qualquer", campanha.getFlowDisparoRef());
         assertEquals("Campanha Teste", campanha.getTitulo());
         assertEquals("Campanha Teste", campanha.getNumeroIdRef());
         assertNull(campanha.getId());

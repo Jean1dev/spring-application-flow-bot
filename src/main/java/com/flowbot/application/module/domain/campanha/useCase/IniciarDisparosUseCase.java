@@ -32,7 +32,7 @@ public class IniciarDisparosUseCase {
         var numero = numeroMongoDbRepository.findById(campanha.getNumeroIdRef()).orElseThrow();
         validarOperacao(campanha, numero);
 
-        var body = buildBody(campanha.getNumerosParaDisparo(), numero.getWhatsappInternalId(), numero.getId());
+        var body = buildBody(campanha, numero.getWhatsappInternalId(), numero.getId());
         return botBuilderApi.batchSend(body);
     }
 
@@ -44,9 +44,24 @@ public class IniciarDisparosUseCase {
         if (!StatusNumero.VALIDADO.equals(numero.getStatusNumero())) {
             throw new ValidationException("Nao eh possivel continuar porque o numero esta com o status %s".formatted(numero.getStatusNumero().toString()));
         }
+
+        validarMensagemDisparo(campanha);
     }
 
-    private HashMap<String, Object> buildBody(List<String> numerosParaDisparo, String whatsappInternalId, String id) {
+    private void validarMensagemDisparo(Campanha campanha) {
+        if (Objects.isNull(campanha.getFlowDisparoRef()) && Objects.isNull(campanha.getMessageDisparo())) {
+            throw new ValidationException("Campanha sem mensagem de disparo");
+        }
+
+        if (Objects.isNull(campanha.getFlowDisparoRef()) && campanha.getMessageDisparo().isEmpty()) {
+            throw new ValidationException("Campanha sem mensagem de disparo");
+        }
+
+        // validar se existe um flow valido
+    }
+
+    private HashMap<String, Object> buildBody(Campanha campanha, String whatsappInternalId, String id) {
+        List<String> numerosParaDisparo = campanha.getNumerosParaDisparo();
         var map = new HashMap<String, Object>();
         map.put("to", numerosParaDisparo);
         map.put("key", whatsappInternalId);
@@ -68,13 +83,13 @@ public class IniciarDisparosUseCase {
 
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("label", "teste");
-        dataMap.put("phone", "48998457797");
+        dataMap.put("phone", "9999999999");
 
         Map<String, Object> actionMap = new HashMap<>();
         actionMap.put("type", "ENVIAR_MENSAGEM");
 
         Map<String, Object> dataActionMap = new HashMap<>();
-        dataActionMap.put("message", "envio de mensagem automatica em batch, nao responder");
+        dataActionMap.put("message", campanha.getMessageDisparo());
 
         actionMap.put("data", dataActionMap);
         dataMap.put("action", actionMap);
