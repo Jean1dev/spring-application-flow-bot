@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +47,19 @@ class CampanhaControllerTest extends E2ETests {
     @BeforeAll
     public static void mongoIsUp() {
         assertTrue(MONGO_CONTAINER.isRunning());
+    }
+
+    @Test
+    @DisplayName("Teste de delecao de campanha")
+    void deleteCampanha() throws Exception {
+        var id = campanhaMongoDBRepository.save(umaCampanha()).getId();
+
+        final var request = delete("/campanhas/" + id);
+        final var response = this.mvc.perform(request).andDo(print());
+
+        response.andExpect(status().isNoContent());
+
+        assertTrue(campanhaMongoDBRepository.findById(id).isEmpty());
     }
 
     @Test

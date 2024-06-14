@@ -25,6 +25,8 @@ public class Campanha {
     private CategoriaCampanha categoria;
     private StatusCampanha status;
     private List<String> arquivosUrls;
+    private String messageDisparo;
+    private String flowDisparoRef;
     @Transient
     private List<String> validateMessages;
 
@@ -34,7 +36,9 @@ public class Campanha {
                     List<String> numerosParaDisparo,
                     CategoriaCampanha categoria,
                     StatusCampanha status,
-                    List<String> arquivosUrls) {
+                    List<String> arquivosUrls,
+                    String messageDisparo,
+                    String flowDisparoRef) {
         this.id = id;
         this.titulo = titulo;
         this.numeroIdRef = numeroIdRef;
@@ -42,6 +46,8 @@ public class Campanha {
         this.categoria = categoria;
         this.status = (StatusCampanha) nullOrValue(status, StatusCampanha.ATIVO);
         this.arquivosUrls = arquivosUrls;
+        this.messageDisparo = messageDisparo;
+        this.flowDisparoRef = flowDisparoRef;
         validateMessages = new ArrayList<>();
     }
 
@@ -90,5 +96,13 @@ public class Campanha {
 
     public List<String> getArquivosUrls() {
         return arquivosUrls;
+    }
+
+    public String getMessageDisparo() {
+        return messageDisparo;
+    }
+
+    public String getFlowDisparoRef() {
+        return flowDisparoRef;
     }
 }

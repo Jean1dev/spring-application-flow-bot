@@ -3,6 +3,7 @@ package com.flowbot.application.module.domain.campanha.useCase;
 import com.flowbot.application.UseCaseTest;
 import com.flowbot.application.http.BotBuilderApi;
 import com.flowbot.application.http.dtos.BatchSendResponse;
+import com.flowbot.application.module.domain.campanha.Campanha;
 import com.flowbot.application.module.domain.campanha.CampanhaMongoDBRepository;
 import com.flowbot.application.module.domain.numeros.NumeroMongoDbRepository;
 import com.flowbot.application.module.domain.numeros.StatusNumero;
@@ -67,6 +68,24 @@ class IniciarDisparosUseCaseTest extends UseCaseTest {
     void deveOcorrerErroDeValidacaoNoNumero() {
         var campanha = umaCampanha(List.of("1", "2"));
         var numero = umNumero(StatusNumero.BANIDO);
+
+        when(repository.findById(anyString())).thenReturn(Optional.of(campanha));
+        when(numeroMongoDbRepository.findById(anyString())).thenReturn(Optional.of(numero));
+
+        assertThrows(ValidationException.class, () -> useCase.execute("anyID"));
+
+        verify(botBuilderApi, never()).batchSend(anyMap());
+    }
+
+    @DisplayName("Deve aplicar as validacoes de mensagem")
+    @Test
+    void deveAplicarValidacoesDeMensagem() {
+        var campanha = mock(Campanha.class);
+        var numero = umNumero(StatusNumero.VALIDADO);
+
+        when(campanha.getNumeroIdRef()).thenReturn("1");
+        when(campanha.getNumerosParaDisparo()).thenReturn(List.of("1", "2"));
+        when(campanha.getMessageDisparo()).thenReturn("");
 
         when(repository.findById(anyString())).thenReturn(Optional.of(campanha));
         when(numeroMongoDbRepository.findById(anyString())).thenReturn(Optional.of(numero));

@@ -24,7 +24,9 @@ public class CriarCampanhaUseCase {
                 request.numerosParaDisparo(),
                 CategoriaCampanha.valueOf(request.categoria()),
                 null,
-                request.arquivosUrls()
+                request.arquivosUrls(),
+                request.messageDisparo(),
+                request.flowIdRef()
         );
 
         var isValid = campanha.validate();
