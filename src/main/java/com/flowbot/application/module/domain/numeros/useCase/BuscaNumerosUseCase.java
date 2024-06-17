@@ -5,12 +5,12 @@ import com.flowbot.application.module.domain.numeros.NumeroMongoDbRepository;
 import com.flowbot.application.module.domain.numeros.api.filter.GetNumerosFilter;
 import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,15 +42,10 @@ public class BuscaNumerosUseCase {
             final int size
     ) {
         var pageRequest = PageRequest.of(page, size);
-        var query = buildQuery(filter);
-        query.with(pageRequest);
 
-        var numeros = mongoTemplate.find(query, Numero.class);
-        return PageableExecutionUtils.getPage(
-                numeros,
-                pageRequest,
-                () -> mongoTemplate.count(query, Numero.class)
-        );
+        var numeros = mongoTemplate.find(buildQuery(filter).with(pageRequest), Numero.class);
+        var total = mongoTemplate.count(buildQuery(filter), Numero.class);
+        return new PageImpl<>(numeros, pageRequest, total);
     }
 
     private Query buildQuery(GetNumerosFilter filter) {
