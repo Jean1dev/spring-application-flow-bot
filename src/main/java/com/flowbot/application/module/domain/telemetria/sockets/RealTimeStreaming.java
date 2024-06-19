@@ -53,6 +53,7 @@ public class RealTimeStreaming {
     }
 
     private void streaming(Numero numero, WebSocketSession session, String currentTenant) {
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (session) {
             try {
                 TextMessage message = createMessage(new DefaultMessage("Buscando dados do numero %s".formatted(numero.getNumero())));

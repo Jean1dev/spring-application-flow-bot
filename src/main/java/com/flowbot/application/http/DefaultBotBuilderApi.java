@@ -49,8 +49,7 @@ public class DefaultBotBuilderApi implements BotBuilderApi {
                 .onStatus(is5xx, a5xxHandler(""))
                 .onStatus(isNotFound, notFoundHandler("def 1", "def 2"));
 
-        var body = responseSpec.body(VerifyNumberResponse.class);
-        return body;
+        return responseSpec.body(VerifyNumberResponse.class);
     }
 
     @Override
@@ -83,8 +82,7 @@ public class DefaultBotBuilderApi implements BotBuilderApi {
                     .onStatus(isNotFound, notFoundHandler("def 1", "def 2"));
 
             var body = responseSpec.body(Map.class);
-            boolean success = (boolean) body.get("success");
-            return success;
+            return (boolean) body.get("success");
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -99,9 +97,8 @@ public class DefaultBotBuilderApi implements BotBuilderApi {
                 .onStatus(is5xx, a5xxHandler(""))
                 .onStatus(isNotFound, notFoundHandler("def 1", "def 2"));
 
-        List<AuditMessagesResponse> body1 = responseSpec.body(new ParameterizedTypeReference<>() {
+        return responseSpec.body(new ParameterizedTypeReference<>() {
         });
-        return body1;
     }
 
     private RestClient.ResponseSpec.ErrorHandler notFoundHandler(final String... args) {
