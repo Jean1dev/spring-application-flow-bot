@@ -2,16 +2,19 @@ package com.flowbot.application.http;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flowbot.application.http.dtos.AuditMessagesResponse;
 import com.flowbot.application.http.dtos.BatchSendResponse;
 import com.flowbot.application.http.dtos.VerifyNumberResponse;
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -85,6 +88,20 @@ public class DefaultBotBuilderApi implements BotBuilderApi {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<AuditMessagesResponse> audit(String key) {
+        var responseSpec = restClient.get()
+                .uri("/poc/whats/audit",
+                        uriBuilder -> uriBuilder.queryParam("key", key).build())
+                .retrieve()
+                .onStatus(is5xx, a5xxHandler(""))
+                .onStatus(isNotFound, notFoundHandler("def 1", "def 2"));
+
+        List<AuditMessagesResponse> body1 = responseSpec.body(new ParameterizedTypeReference<>() {
+        });
+        return body1;
     }
 
     private RestClient.ResponseSpec.ErrorHandler notFoundHandler(final String... args) {
