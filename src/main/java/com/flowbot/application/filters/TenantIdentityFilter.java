@@ -1,28 +1,32 @@
 package com.flowbot.application.filters;
 
-import com.flowbot.application.context.TenantThreads;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+
+import static com.flowbot.application.shared.AuthUtils.identifyResourceOwner;
+import static com.flowbot.application.shared.AuthUtils.setTenant;
 
 @ConditionalOnExpression("${keycloak.enabled:true} == true")
 @Component
 public class TenantIdentityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // no momento auth com websocket eh feito de outra forma
+        if (request.getRequestURI().equals("/ws")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         identifyRequest(authentication);
 
@@ -34,31 +38,8 @@ public class TenantIdentityFilter extends OncePerRequestFilter {
             return;
 
         Object principal = authentication.getPrincipal();
-        String resourceOwner = extractResourceOwner((Jwt) principal);
+        var resourceOwner = identifyResourceOwner(principal);
         logger.info(String.format("Identified resource owner: %s", resourceOwner));
-
-        TenantThreads.setTenantId(setTenant(resourceOwner));
-    }
-
-    private String setTenant(String resourceOwner) {
-        var length = resourceOwner.length();
-        var primeiras4caracteres = resourceOwner.substring(0, 4);
-        var ultimas4caracteres = resourceOwner.substring(length - 4);
-        return primeiras4caracteres + ultimas4caracteres;
-    }
-
-    private String extractResourceOwner(final Jwt jwt) {
-        var keysSearcheds = List.of("sub");
-        var resourceOwner = new ArrayList<>();
-        for (String key : keysSearcheds) {
-            if (jwt.getClaims().containsKey(key)) {
-                resourceOwner.add(jwt.getClaims().get(key).toString() + "-");
-            }
-        }
-
-        var joined = Strings.join(resourceOwner, '-');
-        return joined
-                .replace("-", "")
-                .replace(".", "");
+        setTenant(resourceOwner);
     }
 }
