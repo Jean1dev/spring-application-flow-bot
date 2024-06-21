@@ -21,6 +21,12 @@ import static com.flowbot.application.shared.AuthUtils.setTenant;
 public class TenantIdentityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // no momento auth com websocket eh feito de outra forma
+        if (request.getRequestURI().equals("/ws")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         identifyRequest(authentication);
 

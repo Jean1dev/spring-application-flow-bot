@@ -11,9 +11,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.flowbot.application.shared.AuthUtils.setTenant;
 
 @Component
 public class WebSocketGateway extends AbstractWebSocketHandler {
@@ -31,11 +32,21 @@ public class WebSocketGateway extends AbstractWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        Principal principal = session.getPrincipal();
+
+        // Eh uma gambiarra, refac in the future
+        var tenantAuth = extractTenantAuth(session);
+        //var tenantSeted = setTenant(tenantAuth);
+        //log.info("New session connected: {}", tenantSeted);
+
         super.afterConnectionEstablished(session);
-        log.info("New session connected: {}", session.getId());
-        log.info("Principal: {}", principal);
         sessions.put(session.getId(), session);
+    }
+
+    private String extractTenantAuth(WebSocketSession session) {
+        var sub = session.getUri().getQuery().split("=")[1];
+        return sub
+                .replace("-", "")
+                .replace(".", "");
     }
 
     @Override

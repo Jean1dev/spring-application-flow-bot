@@ -3,7 +3,7 @@ package com.flowbot.application.websocketserver.output;
 import com.flowbot.application.websocketserver.TypeMessageSocketOutput;
 
 public record TelemetriaWhatsMessage(
-        TypeMessageSocketOutput type,
+        TypeMessageSocketOutput typeMessageSocketOutput,
         String numeroId,
         String status,
         String id,
