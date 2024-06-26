@@ -2,6 +2,7 @@ package com.flowbot.application.module.domain.numeros.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.flowbot.application.module.domain.numeros.Numero;
+import com.flowbot.application.module.domain.numeros.StatusNumero;
 import com.flowbot.application.module.domain.numeros.api.dto.*;
 import com.flowbot.application.module.domain.numeros.api.filter.GetNumerosFilter;
 import com.flowbot.application.module.domain.numeros.useCase.*;
@@ -89,6 +90,12 @@ public class NumeroController {
     public List<NumeroSimplificadoOutput> listarSimplificado(
     ) {
         return DtoUtils.listToDtoSimplificado(buscaNumerosUseCase.buscaTodos());
+    }
+
+    @GetMapping("/simplificado/validado")
+    public List<NumeroSimplificadoOutput> listarSimplificadoValidado(
+    ) {
+        return DtoUtils.listToDtoSimplificado(buscaNumerosUseCase.buscaPorStatus(StatusNumero.VALIDADO));
     }
 
     @GetMapping("/{id}")
