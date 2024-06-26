@@ -2,6 +2,7 @@ package com.flowbot.application.module.domain.numeros.api;
 
 import com.flowbot.application.E2ETests;
 import com.flowbot.application.module.domain.numeros.NumeroMongoDbRepository;
+import com.flowbot.application.module.domain.numeros.StatusNumero;
 import com.flowbot.application.module.domain.numeros.api.dto.AtualizarNumeroInput;
 import com.flowbot.application.module.domain.numeros.api.dto.CriarNovoNumeroDto;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,8 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.flowbot.application.module.domain.numeros.NumerosFactory.umNumero;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -79,7 +79,6 @@ class NumeroControllerTest extends E2ETests {
                 .andDo(print());
 
         response.andExpect(status().isOk());
-        // validate if response.headers contains property id
         assertNotNull(response.andReturn().getResponse().getHeader("id"));
     }
 
@@ -242,5 +241,29 @@ class NumeroControllerTest extends E2ETests {
                 .andExpect(jsonPath("$.[2].descricao").value("NIck -numero"))
                 .andExpect(jsonPath("$.[3].descricao").value("Prime-numero"))
                 .andExpect(jsonPath("$.[4].descricao").value("n-numero"));
+    }
+
+    @DisplayName("Deve fazer uma busca simplificada dos numeros validados")
+    @Test
+    void buscaSimplificadaValidada() throws Exception {
+        repository.deleteAll();
+        repository.saveAll(List.of(
+                umNumero("NIck 001"),
+                umNumero("NIck 004"),
+                umNumero("NIck 003"),
+                umNumero("Primeiro"),
+                umNumero(StatusNumero.VALIDADO)
+        ));
+
+        final var request = get("/numeros/simplificado/validado")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$.[0].descricao").value(is("nick-numero")));
     }
 }

@@ -2,6 +2,7 @@ package com.flowbot.application.module.domain.numeros.useCase;
 
 import com.flowbot.application.module.domain.numeros.Numero;
 import com.flowbot.application.module.domain.numeros.NumeroMongoDbRepository;
+import com.flowbot.application.module.domain.numeros.StatusNumero;
 import com.flowbot.application.module.domain.numeros.api.filter.GetNumerosFilter;
 import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,10 @@ public class BuscaNumerosUseCase {
 
     public List<Numero> buscaTodos() {
         return repository.findAll();
+    }
+
+    public List<Numero> buscaPorStatus(StatusNumero status) {
+        return repository.findAllByStatusNumero(status);
     }
 
     public Page<Numero> buscaPadrao(
