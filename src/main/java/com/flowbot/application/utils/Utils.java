@@ -3,6 +3,7 @@ package com.flowbot.application.utils;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public final class Utils {
 
@@ -51,5 +52,23 @@ public final class Utils {
         }
 
         return sb.toString();
+    }
+
+    public static String formatPhone(String phone) {
+        String result = phone.trim();
+        result = result.replace(" ", "");
+        result = result.replace("(", "");
+        result = result.replace(")", "");
+        result = result.replace("-", "");
+        return result;
+    }
+
+    private static boolean verificarNumeroValido(String telefone) {
+        if (Objects.isNull(telefone))
+            return false;
+
+        final var regex = "^[1-9]{2}[0-9]{8,9}$";
+
+        return Pattern.matches(regex, telefone);
     }
 }
