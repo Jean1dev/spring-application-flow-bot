@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static com.flowbot.application.utils.Utils.formatPhone;
 import static com.flowbot.application.utils.Utils.generateWhatsappId;
 
 @Service
@@ -53,7 +54,7 @@ public class PlayGroundUseCase {
                 return new PlayGroundExecOutput(false, true, "Numero não está validado", numero.getId());
             }
 
-            var body = buildBody(numero.getWhatsappInternalId(), recipientNumber, message);
+            var body = buildBody(numero.getWhatsappInternalId(), formatPhone(recipientNumber), message);
             boolean playgrounded = botBuilderApi.playground(body);
             return new PlayGroundExecOutput(playgrounded, false, getMessage(playgrounded), numero.getId());
         } else {
