@@ -15,6 +15,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/campanhas")
 public class CampanhaController {
@@ -32,6 +34,12 @@ public class CampanhaController {
         this.iniciarDisparosUseCase = iniciarDisparosUseCase;
         this.buscaCampanhaUseCase = buscaCampanhaUseCase;
         this.removerCampanhaUseCase = removerCampanhaUseCase;
+    }
+
+
+    @GetMapping("/{id}/arquivos")
+    public List<String> getArquivosDaCampanha(@PathVariable String id) {
+        return buscaCampanhaUseCase.getArquivosDaCampanha(id);
     }
 
     @DeleteMapping("/{id}")

@@ -19,6 +19,7 @@ import org.testcontainers.utility.DockerImageName;
 import java.util.List;
 
 import static com.flowbot.application.module.domain.campanha.CampanhaFactory.umaCampanha;
+import static com.flowbot.application.module.domain.campanha.CampanhaFactory.umaCampanhaComArquivos;
 import static com.flowbot.application.module.domain.numeros.NumerosFactory.umNumero;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,6 +48,20 @@ class CampanhaControllerTest extends E2ETests {
     @BeforeAll
     public static void mongoIsUp() {
         assertTrue(MONGO_CONTAINER.isRunning());
+    }
+
+    @Test
+    @DisplayName("Deve buscar todos os arquivos da campanha")
+    void deveBUscarArquivos() throws Exception {
+        var arquivos = List.of("arquivo1", "arquivo2");
+        var id = campanhaMongoDBRepository.save(umaCampanhaComArquivos(arquivos)).getId();
+
+        final var request = get("/campanhas/" + id + "/arquivos");
+        final var response = this.mvc.perform(request).andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value(is(arquivos.get(0))))
+                .andExpect(jsonPath("$[1]").value(is(arquivos.get(1))));
     }
 
     @Test

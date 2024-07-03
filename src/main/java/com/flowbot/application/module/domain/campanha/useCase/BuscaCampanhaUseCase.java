@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -41,5 +42,11 @@ public class BuscaCampanhaUseCase {
 
                 })
                 .toList();
+    }
+
+    public List<String> getArquivosDaCampanha(String id) {
+        return repository.findById(id)
+                .map(Campanha::getArquivosUrls)
+                .orElse(Collections.emptyList());
     }
 }
