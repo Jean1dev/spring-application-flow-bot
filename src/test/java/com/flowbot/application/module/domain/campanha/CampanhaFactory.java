@@ -18,6 +18,20 @@ public final class CampanhaFactory {
         );
     }
 
+    public static Campanha umaCampanhaComArquivos(List<String> arquivosUrl) {
+        return new Campanha(
+                null,
+                "Campanha Teste",
+                "Campanha Teste",
+                null,
+                CategoriaCampanha.AVISO,
+                null,
+                arquivosUrl,
+                null,
+                null
+        );
+    }
+
     public static Campanha umaCampanha(List<String> numeros) {
         return new Campanha(
                 null,
