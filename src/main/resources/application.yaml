@@ -1,6 +1,9 @@
 server:
   port: ${PORT:8080}
 
+config:
+  private-key: chave-super-secreta
+
 keycloak:
   enabled: true
   realm: caixinha-auth-server

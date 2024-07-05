@@ -1,30 +1,48 @@
-# name: Deploy to Heroku
+name: Deploy to Heroku
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
+jobs:
 
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v2
+  build:
+    runs-on: ubuntu-latest
 
-#     - name: Set up Java
-#       uses: actions/setup-java@v2
-#       with:
-#         distribution: 'temurin'
-#         java-version: '21'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-#     - name: Build with Maven
-#       run: mvn -B package --file pom.xml
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '21'
 
-#     - name: Deploy to Heroku
-#       uses: akhileshns/heroku-deploy@v3.13.15
-#       with:
-#         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-#         heroku_app_name: 'o-auth-managment-server'
-#         heroku_email: 'jeanlucafp@gmail.com'
+    - name: Build with Maven
+      run: mvn -B clean package --file pom.xml
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/heroku'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Deploy to Heroku
+      uses: akhileshns/heroku-deploy@v3.13.15
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: 'o-auth-managment-server'
+        heroku_email: 'jeanlucafp@gmail.com'
