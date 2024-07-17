@@ -1,9 +1,12 @@
-package com.flowbot.application.module.domain.playground.api;
+package com.flowbot.application.module.domain.numeros.api;
 
 import com.flowbot.application.E2ETests;
+import com.flowbot.application.http.dtos.TypeBotAddInput;
 import com.flowbot.application.module.domain.numeros.NumeroMongoDbRepository;
 import com.flowbot.application.module.domain.numeros.StatusNumero;
+import com.flowbot.application.module.domain.numeros.api.dto.VincularTypeBotInput;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,21 +16,20 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
-import java.util.Map;
-
 import static com.flowbot.application.module.domain.numeros.NumerosFactory.umNumero;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class PlayGroundControllerTest extends E2ETests {
+class NumerosTypeBotControllerTest extends E2ETests {
 
     @Autowired
-    private NumeroMongoDbRepository numeroMongoDbRepository;
+    private NumeroMongoDbRepository repository;
 
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse(MONGO_VERSION));
@@ -43,30 +45,34 @@ class PlayGroundControllerTest extends E2ETests {
     }
 
     @Test
-    void execute() throws Exception {
-        var id = numeroMongoDbRepository.save(umNumero(StatusNumero.VALIDADO)).getId();
-        var map = Map.of(
-                "senderId", id,
-                "recipientNumber", "2",
-                "message", "ola");
+    void vincular() throws Exception {
+        var id = repository.save(umNumero(StatusNumero.VALIDADO)).getId();
+        var input = new VincularTypeBotInput(id, "typebot", "name");
 
-        when(botBuilderApi.playground(anyMap())).thenReturn(true);
+        when(botBuilderApi.addTypeBot(any(TypeBotAddInput.class))).thenReturn(true);
 
-        final var request = post("/playground")
+        final var request = post("/api/v1/numeros-typebots/vincular")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(map));
+                .content(mapper.writeValueAsString(input));
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("deve buscar a quantidade de vinculos corretamente")
+    void deveBUscarQuantidadeVinculos() throws Exception {
+        final var request = get("/api/v1/numeros-typebots/quantidade-vinculos")
+                .param("name", "name")
+                .param("apiHost", "apiHost")
+                .contentType(MediaType.APPLICATION_JSON);
 
         final var response = this.mvc.perform(request)
                 .andDo(print());
 
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").exists())
-                .andExpect(jsonPath("$.needValidadeNumber").exists())
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.senderId").exists())
-                .andExpect(jsonPath("$.senderId").value(id))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.needValidadeNumber").value(false))
-                .andExpect(jsonPath("$.message").value("Playground enviado com sucesso"));
+                .andExpect(jsonPath("$.quantidade").value(0));
     }
 }

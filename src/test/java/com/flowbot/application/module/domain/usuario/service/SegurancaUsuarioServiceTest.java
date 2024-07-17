@@ -13,7 +13,8 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SegurancaUsuarioServiceTest extends E2ETests {
 
@@ -22,7 +23,7 @@ class SegurancaUsuarioServiceTest extends E2ETests {
     private MongoTemplate mongoTemplate;
 
     @Container
-    public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
+    public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse(MONGO_VERSION));
 
     @DynamicPropertySource
     public static void mongoDbProperties(DynamicPropertyRegistry registry) {

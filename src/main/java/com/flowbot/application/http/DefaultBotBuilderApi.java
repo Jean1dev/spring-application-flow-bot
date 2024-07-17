@@ -2,9 +2,7 @@ package com.flowbot.application.http;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flowbot.application.http.dtos.AuditMessagesResponse;
-import com.flowbot.application.http.dtos.BatchSendResponse;
-import com.flowbot.application.http.dtos.VerifyNumberResponse;
+import com.flowbot.application.http.dtos.*;
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +97,25 @@ public class DefaultBotBuilderApi implements BotBuilderApi {
 
         return responseSpec.body(new ParameterizedTypeReference<>() {
         });
+    }
+
+    @Override
+    public boolean addTypeBot(TypeBotAddInput addInput) {
+        try {
+            var responseSpec = restClient.post()
+                    .uri("/poc/whats/add-typebot")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(mapper.writeValueAsString(addInput))
+                    .retrieve()
+                    .onStatus(is5xx, a5xxHandler(""))
+                    .onStatus(isNotFound, notFoundHandler("def 1", "def 2"));
+
+            var body = responseSpec.body(TypeBotAddResult.class);
+            assert body != null;
+            return body.success();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private RestClient.ResponseSpec.ErrorHandler notFoundHandler(final String... args) {
