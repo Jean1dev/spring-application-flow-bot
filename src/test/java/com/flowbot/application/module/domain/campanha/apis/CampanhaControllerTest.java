@@ -38,7 +38,7 @@ class CampanhaControllerTest extends E2ETests {
     private CampanhaMongoDBRepository campanhaMongoDBRepository;
 
     @Container
-    public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
+    public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse(MONGO_VERSION));
 
     @DynamicPropertySource
     public static void mongoDbProperties(DynamicPropertyRegistry registry) {
