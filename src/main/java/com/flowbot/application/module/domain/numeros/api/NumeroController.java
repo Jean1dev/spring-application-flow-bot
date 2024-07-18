@@ -5,6 +5,7 @@ import com.flowbot.application.module.domain.numeros.Numero;
 import com.flowbot.application.module.domain.numeros.StatusNumero;
 import com.flowbot.application.module.domain.numeros.api.dto.*;
 import com.flowbot.application.module.domain.numeros.api.filter.GetNumerosFilter;
+import com.flowbot.application.module.domain.numeros.service.VerificarTodosNumerosService;
 import com.flowbot.application.module.domain.numeros.useCase.*;
 import com.flowbot.application.shared.ApplicationScheduleService;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ public class NumeroController {
     private final ApplicationScheduleService scheduledExecutorService;
     private final AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase;
     private final AtualizarNumeroUseCase atualizarNumeroUseCase;
+    // REMOVER ESSE INPUT DAQUI FUTURAMENTE
+    private final VerificarTodosNumerosService verificarTodosNumerosService;
 
     public NumeroController(
             CriarNumeroUseCase criarNumeroUseCase,
@@ -33,13 +36,21 @@ public class NumeroController {
             ValidarNumeroUseCase validarNumeroUseCase,
             ApplicationScheduleService scheduledExecutorService,
             AdicionarNovoWhatsappIdUseCase adicionarNovoWhatsappIdUseCase,
-            AtualizarNumeroUseCase atualizarNumeroUseCase) {
+            AtualizarNumeroUseCase atualizarNumeroUseCase,
+            VerificarTodosNumerosService verificarTodosNumerosService) {
         this.criarNumeroUseCase = criarNumeroUseCase;
         this.buscaNumerosUseCase = buscaNumerosUseCase;
         this.validarNumeroUseCase = validarNumeroUseCase;
         this.scheduledExecutorService = scheduledExecutorService;
         this.adicionarNovoWhatsappIdUseCase = adicionarNovoWhatsappIdUseCase;
         this.atualizarNumeroUseCase = atualizarNumeroUseCase;
+        this.verificarTodosNumerosService = verificarTodosNumerosService;
+    }
+
+    @PostMapping("/validar-todos")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void validarTodosNumeros() {
+        verificarTodosNumerosService.verificar();
     }
 
     @PutMapping("/{id}")
