@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface BotBuilderApi {
 
-    VerifyNumberResponse verificarStatusDoNumero(final String id);
+    VerifyNumberResponse verificarStatusDoNumero(final String whatsappKey);
 
     BatchSendResponse batchSend(Map<String, Object> payload);
 
