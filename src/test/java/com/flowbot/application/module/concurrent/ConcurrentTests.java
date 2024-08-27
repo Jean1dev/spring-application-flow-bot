@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Testes de concorrencia")
 public class ConcurrentTests extends SecurityTests {
 
+    public static final String DB_STARTS = "user";
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse(MONGO_VERSION));
 
@@ -42,7 +43,7 @@ public class ConcurrentTests extends SecurityTests {
     void deveSepararDadosEmConcorrencia() throws Exception {
         MongoClient mongoClient = MongoClients.create(MONGO_CONTAINER.getReplicaSetUrl());
         mongoClient.listDatabaseNames().forEach(db -> {
-            if (db.startsWith("flow")) {
+            if (db.startsWith(DB_STARTS)) {
                 mongoClient.getDatabase(db).drop();
             }
         });
@@ -94,7 +95,7 @@ public class ConcurrentTests extends SecurityTests {
         MongoIterable<String> databaseNames = mongoClient.listDatabaseNames();
         int expectetdDabasesFound = 0;
         for (String dbName : databaseNames) {
-            if (dbName.startsWith("flowadmin")) {
+            if (dbName.startsWith(DB_STARTS)) {
                 expectetdDabasesFound++;
 
                 Document firsted = mongoClient.getDatabase(dbName).getCollection("numero").find().first();

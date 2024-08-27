@@ -7,7 +7,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 
 public class MultiTenantMongoDatabaseFactory extends SimpleMongoClientDatabaseFactory {
-    public static final String DEFAULT_DATABASE_NAME = "flowadmin";
+    public static final String DEFAULT_DATABASE_NAME = "user";
+    public static final String ADMIN_DATABASE_NAME = "flowadmin";
 
     public MultiTenantMongoDatabaseFactory(String connectionString) {
         super(connectionString);

@@ -11,10 +11,14 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PlanoControllerTest extends E2ETests {
@@ -34,7 +38,7 @@ class PlanoControllerTest extends E2ETests {
 
     @Test
     void criarPlano() throws Exception {
-        var inputDto = new CriarPlanoInputDto("XXXXXXXXXXXXXXX", "MENSAL");
+        var inputDto = new CriarPlanoInputDto("john@doe.io", "MENSAL");
         final var request = post("/plano")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(inputDto));
@@ -44,5 +48,19 @@ class PlanoControllerTest extends E2ETests {
 
         response.andExpect(status().isOk());
         assertNotNull(response.andReturn().getResponse().getHeader("id"));
+    }
+
+    @Test
+    void obterPlanoVigente() throws Exception {
+        final var request = get("/plano/vigente?email=john@doe.io")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        var formatedDate = LocalDate.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.vigenteAte").value(formatedDate))
+                .andExpect(jsonPath("$.email").value("john@doe.io"));
     }
 }

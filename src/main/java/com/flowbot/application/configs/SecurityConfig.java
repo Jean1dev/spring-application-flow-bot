@@ -22,6 +22,7 @@ public class SecurityConfig {
                             authorizeConfig.requestMatchers("/ws", "/ws/**").permitAll();
                             authorizeConfig.requestMatchers("/public").permitAll();
                             authorizeConfig.requestMatchers("/logout").permitAll();
+                            authorizeConfig.requestMatchers("/plano/vigente").permitAll();
                             authorizeConfig.requestMatchers(HttpMethod.OPTIONS).permitAll();
                             authorizeConfig.anyRequest().authenticated();
                         })

@@ -22,10 +22,16 @@ logging:
         web:
           client: DEBUG
 
+mongodb:
+  principal:
+    uri: ${MONGO_URL:mongodb://localhost:27017/flow}
+  admin:
+    uri: ${MONGO_URL:mongodb://localhost:27017/flow}
+
 spring:
   data:
     mongodb:
-      uri: ${MONGO_URL:mongodb://localhost:27017/flow}
+      uri: ${mongodb.principal.uri}
 
   security:
     oauth2:
