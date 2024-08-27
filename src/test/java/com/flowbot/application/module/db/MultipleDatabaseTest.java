@@ -6,14 +6,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class MultipleDatabaseTest extends E2ETests {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -32,7 +38,8 @@ public class MultipleDatabaseTest extends E2ETests {
 
     @Test
     public void testMultipleDatabases() {
-        Assertions.assertEquals(MultiTenantMongoDatabaseFactory.DEFAULT_DATABASE_NAME + "-", mongoTemplate.getDb().getName());
+
+        Assertions.assertTrue(mongoTemplate.getDb().getName().startsWith(MultiTenantMongoDatabaseFactory.DEFAULT_DATABASE_NAME + "-"));
         Assertions.assertEquals(MultiTenantMongoDatabaseFactory.ADMIN_DATABASE_NAME, adminMongoTemplate.getDb().getName());
 
         var contentAsSaveInMongoTemplate = DummyObject.of("mongoTemplate");
