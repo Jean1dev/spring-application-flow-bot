@@ -28,7 +28,8 @@ class PlanoControllerTest extends E2ETests {
 
     @DynamicPropertySource
     public static void mongoDbProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", MONGO_CONTAINER::getReplicaSetUrl);
+        registry.add("mongodb.principal.uri", MONGO_CONTAINER::getReplicaSetUrl);
+        registry.add("mongodb.admin.uri", MONGO_CONTAINER::getReplicaSetUrl);
     }
 
     @BeforeAll
