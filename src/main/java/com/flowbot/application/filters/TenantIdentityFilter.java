@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,9 @@ public class TenantIdentityFilter extends OncePerRequestFilter {
             return;
 
         Object principal = authentication.getPrincipal();
+        if (!(principal instanceof Jwt)) {
+            return;
+        }
         var resourceOwner = identifyResourceOwner(principal);
         logger.info(String.format("Identified resource owner: %s", resourceOwner));
         setTenant(resourceOwner);

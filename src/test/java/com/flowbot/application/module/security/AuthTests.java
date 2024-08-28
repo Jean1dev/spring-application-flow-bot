@@ -24,7 +24,8 @@ public class AuthTests extends SecurityTests {
 
     @DynamicPropertySource
     public static void mongoDbProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", MONGO_CONTAINER::getReplicaSetUrl);
+        registry.add("mongodb.principal.uri", MONGO_CONTAINER::getReplicaSetUrl);
+        registry.add("mongodb.admin.uri", MONGO_CONTAINER::getReplicaSetUrl);
     }
 
     @BeforeAll
@@ -41,6 +42,30 @@ public class AuthTests extends SecurityTests {
                 .andDo(print());
 
         response.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("nao permitir permitir acesso com token invalido")
+    void naoPermitirAcessoComTokenInvalido() throws Exception {
+        final var token = "xpto";
+        final var request = get("/numeros")
+                .with(req -> SecurityTests.setTokenOnHeader(req, token));
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("Deve Permitir acesso em recursos autorizados")
+    void devePermitirAcessoEmRecursosLiberados() throws Exception {
+        final var request = get("/plano/vigente?email=xxxx");
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().is4xxClientError());
     }
 
     @Test
