@@ -3,10 +3,10 @@ package com.flowbot.application.module.domain.financeiro.assinaturas.useCase;
 import com.flowbot.application.UseCaseTest;
 import com.flowbot.application.module.domain.financeiro.assinaturas.PeriodoPlano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.Plano;
-import com.flowbot.application.module.domain.financeiro.assinaturas.PlanoMongoDbRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +18,7 @@ class CriarPlanoUseCaseTest extends UseCaseTest {
     private CriarPlanoUseCase useCase;
 
     @Mock
-    private PlanoMongoDbRepository repository;
+    private MongoTemplate repository;
 
     @Test
     void criarPlanoSimples() {
