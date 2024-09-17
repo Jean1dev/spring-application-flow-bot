@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,5 +32,6 @@ class CriarPlanoUseCaseTest extends UseCaseTest {
         assertNull(id);
 
         verify(repository, times(1)).save(any(Plano.class));
+        verify(repository, times(1)).findAndRemove(any(Query.class), eq(Plano.class));
     }
 }

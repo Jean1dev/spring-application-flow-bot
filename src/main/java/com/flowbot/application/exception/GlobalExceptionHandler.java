@@ -35,6 +35,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     public final ResponseEntity<ErrorResponse> noSuchElementExceptionHandler(NoSuchElementException ex, WebRequest req) {
-        return defaultHanlder(ex, req);
+        return defaultHanlder(new Exception("Elemento não encontrado"), req);
     }
 }

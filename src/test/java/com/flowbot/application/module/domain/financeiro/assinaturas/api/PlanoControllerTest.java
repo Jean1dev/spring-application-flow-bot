@@ -3,6 +3,7 @@ package com.flowbot.application.module.domain.financeiro.assinaturas.api;
 import com.flowbot.application.E2ETests;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.CriarPlanoInputDto;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -35,6 +36,58 @@ class PlanoControllerTest extends E2ETests {
     @BeforeAll
     public static void mongoIsUp() {
         assertTrue(MONGO_CONTAINER.isRunning());
+    }
+
+    @DisplayName("Cria um plano mensal e depois sobrescreve esse plano por um anual")
+    @Test
+    void criarEAtulizarPlano() throws Exception {
+        // VALIDACAO MENSAL
+        var inputDto = new CriarPlanoInputDto("john@doe.io", "MENSAL");
+        var request = post("/plano")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(inputDto));
+
+        var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk());
+
+        request = get("/plano/vigente?email=john@doe.io")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        response = this.mvc.perform(request)
+                .andDo(print());
+
+        var formatedDate = LocalDate.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.vigenteAte").value(formatedDate))
+                .andExpect(jsonPath("$.email").value("john@doe.io"));
+
+        // FIM DA VALIDACAO MENSAL
+        // VALIDACAO ANUAL
+
+        inputDto = new CriarPlanoInputDto("john@doe.io", "ANUAL");
+        request = post("/plano")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(inputDto));
+
+        response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk());
+
+        request = get("/plano/vigente?email=john@doe.io")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        response = this.mvc.perform(request)
+                .andDo(print());
+
+        formatedDate = LocalDate.now().plusYears(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.vigenteAte").value(formatedDate))
+                .andExpect(jsonPath("$.email").value("john@doe.io"));
+
+        // FIM DA VALIDACAO ANUAL
     }
 
     @Test
