@@ -1,9 +1,11 @@
 package com.flowbot.application.module.security;
 
 import com.flowbot.application.SecurityTests;
+import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
@@ -13,6 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 import static com.flowbot.application.E2ETests.MONGO_VERSION;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,12 +63,14 @@ public class AuthTests extends SecurityTests {
     @Test
     @DisplayName("Deve Permitir acesso em recursos autorizados")
     void devePermitirAcessoEmRecursosLiberados() throws Exception {
-        final var request = get("/plano/vigente?email=xxxx");
+        this.mvc.perform(get("/plano/vigente?email=xxxx"))
+                .andDo(print())
+                .andExpect(status().is(400));
 
-        final var response = this.mvc.perform(request)
-                .andDo(print());
-
-        response.andExpect(status().is4xxClientError());
+        this.mvc.perform(post("/plano/acesso")
+                        .content(mapper.writeValueAsBytes(new RegistarAcessoDto("", "", "")))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(400));
     }
 
     @Test
