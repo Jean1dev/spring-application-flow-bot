@@ -2,9 +2,13 @@ package com.flowbot.application.module.domain.financeiro.assinaturas.api;
 
 import com.flowbot.application.E2ETests;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.CriarPlanoInputDto;
+import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -15,9 +19,11 @@ import org.testcontainers.utility.DockerImageName;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static com.flowbot.application.module.domain.financeiro.assinaturas.PlanoFactory.umPlanoMensal;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,6 +32,10 @@ class PlanoControllerTest extends E2ETests {
 
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse(MONGO_VERSION));
+
+    @Autowired
+    @Qualifier("adminMongoTemplate")
+    private MongoTemplate mongoTemplate;
 
     @DynamicPropertySource
     public static void mongoDbProperties(DynamicPropertyRegistry registry) {
@@ -37,6 +47,31 @@ class PlanoControllerTest extends E2ETests {
     public static void mongoIsUp() {
         assertTrue(MONGO_CONTAINER.isRunning());
     }
+
+    @Test
+    @DisplayName("Deve registar um novo acesso com sucesso")
+    void registarAcesso() throws Exception {
+        // Arrange
+        final var email = "john@doe.io";
+        mongoTemplate.save(umPlanoMensal(email));
+        var registarAcessoDto = new RegistarAcessoDto("web", "192.168.0.1", email);
+
+        var request = post("/plano/acesso")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(registarAcessoDto));
+
+        // Act
+        var response = this.mvc.perform(request)
+                .andDo(print());
+
+        // Assert
+        var formatedDate = LocalDate.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstAccess").value(true))
+                .andExpect(jsonPath("$.plano.email").value(email))
+                .andExpect(jsonPath("$.plano.vigenteAte").value(formatedDate));
+    }
+
 
     @DisplayName("Cria um plano mensal e depois sobrescreve esse plano por um anual")
     @Test

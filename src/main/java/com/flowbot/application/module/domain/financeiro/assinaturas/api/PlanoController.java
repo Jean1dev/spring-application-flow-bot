@@ -2,7 +2,9 @@ package com.flowbot.application.module.domain.financeiro.assinaturas.api;
 
 import com.flowbot.application.module.domain.financeiro.assinaturas.PeriodoPlano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.PlanoAtivoOutput;
+import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.AcessoOutputDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.CriarPlanoInputDto;
+import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.useCase.CriarPlanoUseCase;
 import com.flowbot.application.module.domain.financeiro.assinaturas.useCase.GerenciamentoDoPlanoUseCase;
 import org.springframework.http.HttpHeaders;
@@ -34,5 +36,10 @@ public class PlanoController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("id", id);
         return ResponseEntity.ok().headers(headers).build();
+    }
+
+    @PostMapping("/acesso")
+    public AcessoOutputDto registarAcesso(@RequestBody RegistarAcessoDto body) {
+        return gerenciamentoDoPlanoUseCase.registarAcesso(body);
     }
 }
