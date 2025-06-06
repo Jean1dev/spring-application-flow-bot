@@ -11,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/plano")
 public class PlanoController {
@@ -36,6 +38,11 @@ public class PlanoController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("id", id);
         return ResponseEntity.ok().headers(headers).build();
+    }
+
+    @GetMapping
+    public List<PlanoAtivoOutput> get() {
+        return gerenciamentoDoPlanoUseCase.listPlanosAtivos();
     }
 
     @PostMapping("/acesso")
