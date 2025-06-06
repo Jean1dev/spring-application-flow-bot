@@ -11,12 +11,21 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GerenciamentoDoPlanoUseCase {
     private final MongoTemplate mongoTemplate;
 
     public GerenciamentoDoPlanoUseCase(@Qualifier("adminMongoTemplate") MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+    }
+
+    public List<PlanoAtivoOutput> listPlanosAtivos() {
+        return mongoTemplate.findAll(Plano.class)
+                .stream()
+                .map(PlanoAtivoOutput::map)
+                .toList();
     }
 
     public PlanoAtivoOutput obterDadosPlano(String email) {

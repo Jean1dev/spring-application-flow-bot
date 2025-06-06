@@ -152,4 +152,22 @@ class PlanoControllerTest extends E2ETests {
                 .andExpect(jsonPath("$.vigenteAte").value(formatedDate))
                 .andExpect(jsonPath("$.email").value("john@doe.io"));
     }
+
+    @Test
+    void listarPlanosAtivos() throws Exception {
+        final var email = "john@doe.io";
+        mongoTemplate.save(umPlanoMensal(email));
+        mongoTemplate.save(umPlanoMensal("carlos@bol.com"));
+        final var request = get("/plano")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].email").value(email))
+                .andExpect(jsonPath("$[0].vigenteAte").value(LocalDate.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+    }
 }
