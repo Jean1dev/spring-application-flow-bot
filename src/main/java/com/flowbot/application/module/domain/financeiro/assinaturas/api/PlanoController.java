@@ -49,4 +49,10 @@ public class PlanoController {
     public AcessoOutputDto registarAcesso(@RequestBody RegistarAcessoDto body) {
         return gerenciamentoDoPlanoUseCase.registarAcesso(body);
     }
+
+    @PostMapping("/reembolso")
+    public ResponseEntity<Void> solicitarReembolso(@RequestParam String email) {
+        gerenciamentoDoPlanoUseCase.processarReembolso(email);
+        return ResponseEntity.ok().build();
+    }
 }
