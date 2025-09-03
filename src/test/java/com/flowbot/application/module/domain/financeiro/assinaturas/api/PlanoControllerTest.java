@@ -1,6 +1,7 @@
 package com.flowbot.application.module.domain.financeiro.assinaturas.api;
 
 import com.flowbot.application.E2ETests;
+import com.flowbot.application.module.domain.financeiro.assinaturas.Plano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.CriarPlanoInputDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
 import org.junit.jupiter.api.BeforeAll;
@@ -141,6 +142,7 @@ class PlanoControllerTest extends E2ETests {
 
     @Test
     void obterPlanoVigente() throws Exception {
+        mongoTemplate.dropCollection(Plano.class);
         final var email = "john@doe.io";
         mongoTemplate.save(umPlanoMensal(email));
 
