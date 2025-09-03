@@ -1,6 +1,7 @@
 package com.flowbot.application.module.domain.financeiro.assinaturas.api;
 
 import com.flowbot.application.E2ETests;
+import com.flowbot.application.module.domain.financeiro.assinaturas.Plano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.CriarPlanoInputDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
 import org.junit.jupiter.api.BeforeAll;
@@ -141,7 +142,11 @@ class PlanoControllerTest extends E2ETests {
 
     @Test
     void obterPlanoVigente() throws Exception {
-        final var request = get("/plano/vigente?email=john@doe.io")
+        mongoTemplate.dropCollection(Plano.class);
+        final var email = "john@doe.io";
+        mongoTemplate.save(umPlanoMensal(email));
+
+        final var request = get("/plano/vigente?email=" + email)
                 .contentType(MediaType.APPLICATION_JSON);
 
         final var response = this.mvc.perform(request)
@@ -150,7 +155,7 @@ class PlanoControllerTest extends E2ETests {
         var formatedDate = LocalDate.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.vigenteAte").value(formatedDate))
-                .andExpect(jsonPath("$.email").value("john@doe.io"));
+                .andExpect(jsonPath("$.email").value(email));
     }
 
     @Test
@@ -169,5 +174,30 @@ class PlanoControllerTest extends E2ETests {
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].email").value(email))
                 .andExpect(jsonPath("$[0].vigenteAte").value(LocalDate.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+    }
+
+    @Test
+    void solicitarReembolso() throws Exception {
+        final var email = "john@doe.io";
+        mongoTemplate.save(umPlanoMensal(email));
+
+        final var request = post("/plano/reembolso?email=" + email)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk());
+
+        var requestVigente = get("/plano/vigente?email=" + email)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        var responseVigente = this.mvc.perform(requestVigente)
+                .andDo(print());
+
+        var formatedDate = LocalDate.now().plusDays(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        responseVigente.andExpect(status().isOk())
+                .andExpect(jsonPath("$.vigenteAte").value(formatedDate))
+                .andExpect(jsonPath("$.email").value(email));
     }
 }

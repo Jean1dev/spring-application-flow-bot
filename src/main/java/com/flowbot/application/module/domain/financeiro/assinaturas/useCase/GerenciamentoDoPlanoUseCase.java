@@ -59,4 +59,10 @@ public class GerenciamentoDoPlanoUseCase {
                 .stream()
                 .noneMatch(acesso -> acesso.getPlanoRef().equals(planoRef));
     }
+
+    public void processarReembolso(String email) {
+        var plano = getPlanoById(email);
+        plano.processarReembolso();
+        mongoTemplate.save(plano);
+    }
 }

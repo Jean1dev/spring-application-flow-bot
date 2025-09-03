@@ -72,4 +72,8 @@ public class Plano {
     public Boolean getAtivo() {
         return ativo;
     }
+
+    public void processarReembolso() {
+        this.finalizaEm = LocalDateTime.now().plusDays(5);
+    }
 }

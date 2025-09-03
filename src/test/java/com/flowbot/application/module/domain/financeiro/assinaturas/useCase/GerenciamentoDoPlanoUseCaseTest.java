@@ -71,4 +71,23 @@ class GerenciamentoDoPlanoUseCaseTest extends UseCaseTest {
         assertNotNull(acessoOutputDto);
         assertFalse(acessoOutputDto.firstAccess());
     }
+
+    @Test
+    @DisplayName("Deve processar reembolso e atualizar vencimento do plano para 5 dias")
+    void processarReembolso() {
+        final var email = "john@doe.io";
+        var plano = mock(Plano.class);
+
+        final var usuarioMock = mock(UsuarioDoPlano.class);
+
+        List<Plano> plansList = Collections.singletonList(plano);
+
+        when(mongoTemplate.find(any(Query.class), eq(Plano.class)))
+                .thenReturn(plansList);
+
+        useCase.processarReembolso(email);
+
+        verify(plano).processarReembolso();
+        verify(mongoTemplate).save(plano);
+    }
 }
