@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class UserConfirmationMigrationService {
 
@@ -21,14 +19,13 @@ public class UserConfirmationMigrationService {
     }
 
     public long migrateUserConfirmations() {
-        List<Document> userConfirmations = cryptoMongoTemplate.findAll(Document.class, "user_confirmations");
-
-        if (userConfirmations.isEmpty()) {
-            return 0;
+        final var collectionName = "user_confirmations";
+        var documents = cryptoMongoTemplate.findAll(Document.class, collectionName);
+        if (documents.isEmpty()) {
+            return 0L;
         }
 
-        adminMongoTemplate.insertAll(userConfirmations);
-
-        return userConfirmations.size();
+        adminMongoTemplate.insert(documents, collectionName);
+        return documents.size();
     }
 }

@@ -45,7 +45,7 @@ class UserConfirmationMigrationServiceTest extends UseCaseTest {
 
         assertEquals(3, result);
         verify(cryptoMongoTemplate, times(1)).findAll(Document.class, "user_confirmations");
-        verify(adminMongoTemplate, times(1)).insertAll(any(List.class));
+        verify(adminMongoTemplate, times(1)).insert(any(List.class), anyString());
     }
 
     @Test
@@ -59,7 +59,7 @@ class UserConfirmationMigrationServiceTest extends UseCaseTest {
 
         assertEquals(0, result);
         verify(cryptoMongoTemplate, times(1)).findAll(Document.class, "user_confirmations");
-        verify(adminMongoTemplate, never()).insertAll(any());
+        verify(adminMongoTemplate, never()).insert(any(), anyString());
     }
 
     @Test
@@ -76,7 +76,7 @@ class UserConfirmationMigrationServiceTest extends UseCaseTest {
 
         assertEquals(1, result);
         verify(cryptoMongoTemplate, times(1)).findAll(Document.class, "user_confirmations");
-        verify(adminMongoTemplate, times(1)).insertAll(any(List.class));
+        verify(adminMongoTemplate, times(1)).insert(any(List.class), anyString());
     }
 
     @Test
@@ -104,7 +104,7 @@ class UserConfirmationMigrationServiceTest extends UseCaseTest {
 
         assertEquals(2, result);
         verify(cryptoMongoTemplate, times(1)).findAll(Document.class, "user_confirmations");
-        verify(adminMongoTemplate, times(1)).insertAll(any(List.class));
+        verify(adminMongoTemplate, times(1)).insert(any(List.class), anyString());
     }
 
     @Test
@@ -120,7 +120,7 @@ class UserConfirmationMigrationServiceTest extends UseCaseTest {
         testService.migrateUserConfirmations();
 
         verify(cryptoMongoTemplate, times(1)).findAll(eq(Document.class), eq("user_confirmations"));
-        verify(adminMongoTemplate, times(1)).insertAll(any(List.class));
+        verify(adminMongoTemplate, times(1)).insert(any(List.class), anyString());
         verifyNoMoreInteractions(cryptoMongoTemplate, adminMongoTemplate);
     }
 }
