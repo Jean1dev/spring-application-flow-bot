@@ -18,9 +18,9 @@ bot-builder:
 logging:
   level:
       springframework:
-        security: DEBUG
+        security: INFO
         web:
-          client: DEBUG
+          client: INFO
 
 mongodb:
   principal:
