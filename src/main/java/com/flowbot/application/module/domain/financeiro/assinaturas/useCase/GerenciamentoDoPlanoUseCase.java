@@ -25,7 +25,7 @@ public class GerenciamentoDoPlanoUseCase {
     private final MongoTemplate mongoTemplate;
     private final String connectionString;
 
-    public GerenciamentoDoPlanoUseCase(MongoTemplate mongoTemplate, @Value("${spring.data.mongodb.uri}") String connectionString) {
+    public GerenciamentoDoPlanoUseCase(MongoTemplate mongoTemplate, @Value("${spring.data.mongodb.uri:}") String connectionString) {
         this.mongoTemplate = mongoTemplate;
         this.connectionString = connectionString;
     }
@@ -51,6 +51,15 @@ public class GerenciamentoDoPlanoUseCase {
     }
 
     private PlanoAtivoOutput buscarPlanoEmTodosTenants(String email) {
+        if (connectionString == null || connectionString.isEmpty()) {
+            return mongoTemplate.findAll(Plano.class)
+                    .stream()
+                    .filter(plano -> plano.getUsuario().email().equals(email))
+                    .findFirst()
+                    .map(PlanoAtivoOutput::map)
+                    .orElseThrow();
+        }
+
         var query = new Query().addCriteria(Criteria.where("usuario.email").is(email));
 
         try (MongoClient mongoClient = MongoClients.create(connectionString)) {

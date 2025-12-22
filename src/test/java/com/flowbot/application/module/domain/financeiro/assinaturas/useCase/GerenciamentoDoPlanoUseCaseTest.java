@@ -1,14 +1,16 @@
 package com.flowbot.application.module.domain.financeiro.assinaturas.useCase;
 
 import com.flowbot.application.UseCaseTest;
+import com.flowbot.application.context.TenantThreads;
 import com.flowbot.application.module.domain.financeiro.assinaturas.Acesso;
 import com.flowbot.application.module.domain.financeiro.assinaturas.Plano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.PlanoFactory;
 import com.flowbot.application.module.domain.financeiro.assinaturas.UsuarioDoPlano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -23,10 +25,20 @@ import static org.mockito.Mockito.*;
 
 class GerenciamentoDoPlanoUseCaseTest extends UseCaseTest {
 
-    @InjectMocks
     private GerenciamentoDoPlanoUseCase useCase;
     @Mock
     private MongoTemplate mongoTemplate;
+
+    @BeforeEach
+    void setUp() {
+        TenantThreads.setTenantId("test-tenant");
+        useCase = new GerenciamentoDoPlanoUseCase(mongoTemplate, "");
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantThreads.clear();
+    }
 
     @Test
     void obterDadosPlano() {
