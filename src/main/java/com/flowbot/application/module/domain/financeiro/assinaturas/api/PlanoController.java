@@ -1,5 +1,6 @@
 package com.flowbot.application.module.domain.financeiro.assinaturas.api;
 
+import com.flowbot.application.context.TenantThreads;
 import com.flowbot.application.module.domain.financeiro.assinaturas.PeriodoPlano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.PlanoAtivoOutput;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.AcessoOutputDto;
@@ -27,8 +28,20 @@ public class PlanoController {
     }
 
     @GetMapping("/vigente")
-    public PlanoAtivoOutput obterPlanoVigente(@RequestParam String email) {
-        return gerenciamentoDoPlanoUseCase.obterDadosPlano(email);
+    public PlanoAtivoOutput obterPlanoVigente(@RequestParam String email, @RequestParam(required = false) String tenant) {
+        var tenantAnterior = TenantThreads.getTenantId();
+        try {
+            if (tenant != null && !tenant.isEmpty()) {
+                TenantThreads.setTenantId(tenant);
+            }
+            return gerenciamentoDoPlanoUseCase.obterDadosPlano(email);
+        } finally {
+            if (tenantAnterior != null && !tenantAnterior.isEmpty()) {
+                TenantThreads.setTenantId(tenantAnterior);
+            } else {
+                TenantThreads.clear();
+            }
+        }
     }
 
     @PostMapping
@@ -46,8 +59,20 @@ public class PlanoController {
     }
 
     @PostMapping("/acesso")
-    public AcessoOutputDto registarAcesso(@RequestBody RegistarAcessoDto body) {
-        return gerenciamentoDoPlanoUseCase.registarAcesso(body);
+    public AcessoOutputDto registarAcesso(@RequestBody RegistarAcessoDto body, @RequestParam(required = false) String tenant) {
+        var tenantAnterior = TenantThreads.getTenantId();
+        try {
+            if (tenant != null && !tenant.isEmpty()) {
+                TenantThreads.setTenantId(tenant);
+            }
+            return gerenciamentoDoPlanoUseCase.registarAcesso(body);
+        } finally {
+            if (tenantAnterior != null && !tenantAnterior.isEmpty()) {
+                TenantThreads.setTenantId(tenantAnterior);
+            } else {
+                TenantThreads.clear();
+            }
+        }
     }
 
     @PostMapping("/reembolso")

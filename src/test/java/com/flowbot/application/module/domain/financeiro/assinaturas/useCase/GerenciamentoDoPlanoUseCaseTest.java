@@ -32,7 +32,7 @@ class GerenciamentoDoPlanoUseCaseTest extends UseCaseTest {
     @BeforeEach
     void setUp() {
         TenantThreads.setTenantId("test-tenant");
-        useCase = new GerenciamentoDoPlanoUseCase(mongoTemplate, "");
+        useCase = new GerenciamentoDoPlanoUseCase(mongoTemplate);
     }
 
     @AfterEach

@@ -1,33 +1,23 @@
 package com.flowbot.application.module.domain.financeiro.assinaturas.useCase;
 
-import com.flowbot.application.context.MultiTenantMongoDatabaseFactory;
-import com.flowbot.application.context.TenantThreads;
 import com.flowbot.application.module.domain.financeiro.assinaturas.Acesso;
 import com.flowbot.application.module.domain.financeiro.assinaturas.Plano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.PlanoAtivoOutput;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.AcessoOutputDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.StreamSupport;
 
 @Service
 public class GerenciamentoDoPlanoUseCase {
     private final MongoTemplate mongoTemplate;
-    private final String connectionString;
 
-    public GerenciamentoDoPlanoUseCase(MongoTemplate mongoTemplate, @Value("${spring.data.mongodb.uri:}") String connectionString) {
+    public GerenciamentoDoPlanoUseCase(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
-        this.connectionString = connectionString;
     }
 
     public List<PlanoAtivoOutput> listPlanosAtivos() {
@@ -38,48 +28,12 @@ public class GerenciamentoDoPlanoUseCase {
     }
 
     public PlanoAtivoOutput obterDadosPlano(String email) {
-        var tenantId = TenantThreads.getTenantId();
-        if (tenantId == null || tenantId.isEmpty()) {
-            return buscarPlanoEmTodosTenants(email);
-        }
         return mongoTemplate.findAll(Plano.class)
                 .stream()
                 .filter(plano -> plano.getUsuario().email().equals(email))
                 .findFirst()
                 .map(PlanoAtivoOutput::map)
                 .orElseThrow();
-    }
-
-    private PlanoAtivoOutput buscarPlanoEmTodosTenants(String email) {
-        if (connectionString == null || connectionString.isEmpty()) {
-            return mongoTemplate.findAll(Plano.class)
-                    .stream()
-                    .filter(plano -> plano.getUsuario().email().equals(email))
-                    .findFirst()
-                    .map(PlanoAtivoOutput::map)
-                    .orElseThrow();
-        }
-
-        var query = new Query().addCriteria(Criteria.where("usuario.email").is(email));
-
-        try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-            var databaseNames = mongoClient.listDatabaseNames();
-
-            return StreamSupport.stream(databaseNames.spliterator(), false)
-                    .filter(dbName -> dbName.startsWith(MultiTenantMongoDatabaseFactory.DEFAULT_DATABASE_NAME + "-"))
-                    .map(dbName -> {
-                        var dbFactory = new SimpleMongoClientDatabaseFactory(mongoClient, dbName);
-                        var template = new MongoTemplate(dbFactory);
-                        return template.find(query, Plano.class)
-                                .stream()
-                                .findFirst()
-                                .map(PlanoAtivoOutput::map)
-                                .orElse(null);
-                    })
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElseThrow();
-        }
     }
 
     public AcessoOutputDto registarAcesso(RegistarAcessoDto registarAcessoDto) {
