@@ -3,11 +3,12 @@ version: '3.7'
 services:
   mongodb:
     container_name: mongodb
-    image: mongo:6.0.5
+    image: mongo:8.0
     ports:
       - "27017:27017"
     volumes:
-      - /volumes/mongodb:/data
+      - mongodb_data:/data
+    command: mongod --wiredTigerCacheSizeGB 1
 
   keycloak:
     container_name: admin
@@ -19,3 +20,6 @@ services:
       - 8443:8080
     command:
       - start-dev
+
+volumes:
+  mongodb_data:
