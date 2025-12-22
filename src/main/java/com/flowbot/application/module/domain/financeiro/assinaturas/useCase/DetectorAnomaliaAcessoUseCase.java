@@ -4,7 +4,6 @@ import com.flowbot.application.module.domain.financeiro.assinaturas.Acesso;
 import com.flowbot.application.module.domain.financeiro.assinaturas.Plano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.AnomaliaAcessoDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.DetalhesAcessoDto;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,7 +24,7 @@ public class DetectorAnomaliaAcessoUseCase {
     private static final int LIMITE_DIAS_DIFERENTES = 15;
     private final MongoTemplate mongoTemplate;
 
-    public DetectorAnomaliaAcessoUseCase(@Qualifier("adminMongoTemplate") MongoTemplate mongoTemplate) {
+    public DetectorAnomaliaAcessoUseCase(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 

@@ -19,7 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Tag("e2e")
 public abstract class E2ETests {
 
-    public static final String MONGO_VERSION = "mongo:6.0.5";
+    public static final String MONGO_VERSION = "mongo:8.0";
 
     @Autowired
     protected MockMvc mvc;

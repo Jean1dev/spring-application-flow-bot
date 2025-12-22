@@ -5,7 +5,6 @@ import com.flowbot.application.module.domain.financeiro.assinaturas.Plano;
 import com.flowbot.application.module.domain.financeiro.assinaturas.PlanoAtivoOutput;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.AcessoOutputDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -17,7 +16,7 @@ import java.util.List;
 public class GerenciamentoDoPlanoUseCase {
     private final MongoTemplate mongoTemplate;
 
-    public GerenciamentoDoPlanoUseCase(@Qualifier("adminMongoTemplate") MongoTemplate mongoTemplate) {
+    public GerenciamentoDoPlanoUseCase(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
