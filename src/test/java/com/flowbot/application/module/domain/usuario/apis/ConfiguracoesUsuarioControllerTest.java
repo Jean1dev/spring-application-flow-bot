@@ -96,7 +96,7 @@ class ConfiguracoesUsuarioControllerTest extends E2ETests {
                 .andExpect(jsonPath("$.logoUrl").value("https://example.com/novo-logo.png"))
                 .andExpect(jsonPath("$.name").value("Novo Nome"));
 
-        var configuracaoAtualizada = repository.findByTenantId("test-tenant-id").orElseThrow();
+        var configuracaoAtualizada = repository.findFirstBy().orElseThrow();
         assertEquals("https://example.com/novo-logo.png", configuracaoAtualizada.getLogoUrl());
         assertEquals("Novo Nome", configuracaoAtualizada.getName());
     }
@@ -147,7 +147,7 @@ class ConfiguracoesUsuarioControllerTest extends E2ETests {
 
         response.andExpect(status().isNoContent());
 
-        var configuracaoAtualizada = repository.findByTenantId("test-tenant-id").orElseThrow();
+        var configuracaoAtualizada = repository.findFirstBy().orElseThrow();
         assertEquals("https://example.com/novo-logo.png", configuracaoAtualizada.getLogoUrl());
         assertEquals("Novo Nome", configuracaoAtualizada.getName());
     }
