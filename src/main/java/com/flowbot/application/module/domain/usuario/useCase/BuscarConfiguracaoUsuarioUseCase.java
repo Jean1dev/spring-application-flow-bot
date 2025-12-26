@@ -22,7 +22,7 @@ public class BuscarConfiguracaoUsuarioUseCase {
             throw new ValidationException("Tenant ID não pode ser nulo ou vazio");
         }
 
-        return repository.findByTenantId(tenantId)
+        return repository.findFirstBy()
                 .orElseThrow(() -> new ValidationException("Configuração não encontrada para o usuário"));
     }
 }

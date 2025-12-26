@@ -32,8 +32,8 @@ public class SalvarConfiguracaoUsuarioUseCase {
             throw new ValidationException("Tenant ID não pode ser nulo ou vazio");
         }
 
-        var configuracaoExistente = repository.findByTenantId(tenantId);
-
+        var configuracaoExistente = repository.findFirstBy();
+        
         if (configuracaoExistente.isPresent()) {
             var configuracao = configuracaoExistente.get();
             configuracao.atualizar(logoUrl, name);
@@ -42,7 +42,6 @@ public class SalvarConfiguracaoUsuarioUseCase {
 
         var novaConfiguracao = new ConfiguracaoUsuario(
                 null,
-                tenantId,
                 logoUrl,
                 name,
                 null

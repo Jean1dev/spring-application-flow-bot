@@ -16,7 +16,6 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
-import static com.flowbot.application.module.domain.usuario.ConfiguracaoUsuarioFactory.umaConfiguracao;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -44,16 +43,14 @@ class SalvarConfiguracaoUsuarioUseCaseTest extends UseCaseTest {
     @DisplayName("Deve criar uma nova configuração quando não existe")
     void deveCriarNovaConfiguracao() {
         var dto = new CriarConfiguracaoUsuarioDto("https://example.com/logo.png", "Nome da Empresa");
-        var configuracaoSalva = umaConfiguracao();
-        configuracaoSalva = new ConfiguracaoUsuario("id-123", "test-tenant-id", dto.logoUrl(), dto.name(), null);
+        var configuracaoSalva = new ConfiguracaoUsuario("id-123", dto.logoUrl(), dto.name(), null);
 
-        when(repository.findByTenantId("test-tenant-id")).thenReturn(Optional.empty());
+        when(repository.findFirstBy()).thenReturn(Optional.empty());
         when(repository.save(any(ConfiguracaoUsuario.class))).thenReturn(configuracaoSalva);
 
         var result = useCase.execute(dto);
 
         assertNotNull(result);
-        assertEquals("test-tenant-id", result.getTenantId());
         assertEquals("https://example.com/logo.png", result.getLogoUrl());
         assertEquals("Nome da Empresa", result.getName());
         verify(repository, times(1)).save(any(ConfiguracaoUsuario.class));
@@ -62,13 +59,12 @@ class SalvarConfiguracaoUsuarioUseCaseTest extends UseCaseTest {
     @Test
     @DisplayName("Deve atualizar configuração existente quando já existe")
     void deveAtualizarConfiguracaoExistente() {
-        var configuracaoExistente = umaConfiguracao();
-        configuracaoExistente = new ConfiguracaoUsuario("id-123", "test-tenant-id", "logo-antigo.png", "Nome Antigo", null);
+        var configuracaoExistente = new ConfiguracaoUsuario("id-123", "logo-antigo.png", "Nome Antigo", null);
 
         var dto = new CriarConfiguracaoUsuarioDto("https://example.com/novo-logo.png", "Novo Nome");
-        var configuracaoAtualizada = new ConfiguracaoUsuario("id-123", "test-tenant-id", dto.logoUrl(), dto.name(), null);
+        var configuracaoAtualizada = new ConfiguracaoUsuario("id-123", dto.logoUrl(), dto.name(), null);
 
-        when(repository.findByTenantId("test-tenant-id")).thenReturn(Optional.of(configuracaoExistente));
+        when(repository.findFirstBy()).thenReturn(Optional.of(configuracaoExistente));
         when(repository.save(any(ConfiguracaoUsuario.class))).thenReturn(configuracaoAtualizada);
 
         var result = useCase.execute(dto);
@@ -82,13 +78,12 @@ class SalvarConfiguracaoUsuarioUseCaseTest extends UseCaseTest {
     @Test
     @DisplayName("Deve atualizar usando AtualizarConfiguracaoUsuarioDto")
     void deveAtualizarComAtualizarDto() {
-        var configuracaoExistente = umaConfiguracao();
-        configuracaoExistente = new ConfiguracaoUsuario("id-123", "test-tenant-id", "logo-antigo.png", "Nome Antigo", null);
+        var configuracaoExistente = new ConfiguracaoUsuario("id-123", "logo-antigo.png", "Nome Antigo", null);
 
         var dto = new AtualizarConfiguracaoUsuarioDto("https://example.com/novo-logo.png", "Novo Nome");
-        var configuracaoAtualizada = new ConfiguracaoUsuario("id-123", "test-tenant-id", dto.logoUrl(), dto.name(), null);
+        var configuracaoAtualizada = new ConfiguracaoUsuario("id-123", dto.logoUrl(), dto.name(), null);
 
-        when(repository.findByTenantId("test-tenant-id")).thenReturn(Optional.of(configuracaoExistente));
+        when(repository.findFirstBy()).thenReturn(Optional.of(configuracaoExistente));
         when(repository.save(any(ConfiguracaoUsuario.class))).thenReturn(configuracaoAtualizada);
 
         var result = useCase.execute(dto);
