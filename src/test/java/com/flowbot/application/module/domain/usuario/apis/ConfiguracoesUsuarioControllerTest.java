@@ -72,7 +72,7 @@ class ConfiguracoesUsuarioControllerTest extends E2ETests {
                 .andExpect(jsonPath("$.name").value("Nome da Empresa"))
                 .andExpect(jsonPath("$.dataCriacao").exists());
 
-        var configuracao = repository.findByTenantId("test-tenant-id").orElseThrow();
+        var configuracao = repository.findFirstBy().orElseThrow();
         assertEquals("https://example.com/logo.png", configuracao.getLogoUrl());
         assertEquals("Nome da Empresa", configuracao.getName());
     }
@@ -80,7 +80,7 @@ class ConfiguracoesUsuarioControllerTest extends E2ETests {
     @Test
     @DisplayName("Deve atualizar configuração existente ao criar novamente")
     void deveAtualizarConfiguracaoExistenteAoCriar() throws Exception {
-        var configuracaoExistente = repository.save(umaConfiguracao("test-tenant-id", "logo-antigo.png", "Nome Antigo"));
+        var configuracaoExistente = repository.save(umaConfiguracao("logo-antigo.png", "Nome Antigo"));
 
         var dto = new CriarConfiguracaoUsuarioDto("https://example.com/novo-logo.png", "Novo Nome");
 
@@ -104,7 +104,7 @@ class ConfiguracoesUsuarioControllerTest extends E2ETests {
     @Test
     @DisplayName("Deve buscar configuração com sucesso")
     void deveBuscarConfiguracao() throws Exception {
-        var configuracao = repository.save(umaConfiguracao("test-tenant-id", "https://example.com/logo.png", "Nome da Empresa"));
+        var configuracao = repository.save(umaConfiguracao("https://example.com/logo.png", "Nome da Empresa"));
 
         final var request = get("/configuracoes-usuario")
                 .contentType(MediaType.APPLICATION_JSON);
@@ -134,7 +134,7 @@ class ConfiguracoesUsuarioControllerTest extends E2ETests {
     @Test
     @DisplayName("Deve atualizar configuração existente com PUT")
     void deveAtualizarConfiguracaoComPut() throws Exception {
-        var configuracaoExistente = repository.save(umaConfiguracao("test-tenant-id", "logo-antigo.png", "Nome Antigo"));
+        var configuracaoExistente = repository.save(umaConfiguracao("logo-antigo.png", "Nome Antigo"));
 
         var dto = new AtualizarConfiguracaoUsuarioDto("https://example.com/novo-logo.png", "Novo Nome");
 
@@ -166,7 +166,7 @@ class ConfiguracoesUsuarioControllerTest extends E2ETests {
 
         response.andExpect(status().isNoContent());
 
-        var configuracao = repository.findByTenantId("test-tenant-id").orElseThrow();
+        var configuracao = repository.findFirstBy().orElseThrow();
         assertEquals("https://example.com/logo.png", configuracao.getLogoUrl());
         assertEquals("Nome da Empresa", configuracao.getName());
     }
@@ -191,6 +191,38 @@ class ConfiguracoesUsuarioControllerTest extends E2ETests {
         assertEquals(1, configuracoes.size());
         assertEquals("https://example.com/logo2.png", configuracoes.get(0).getLogoUrl());
         assertEquals("Nome 2", configuracoes.get(0).getName());
+    }
+
+    @Test
+    @DisplayName("Deve buscar configuração pública por tenant sem autenticação")
+    void deveBuscarConfiguracaoPublicaPorTenant() throws Exception {
+        var tenantId = "public-tenant-id";
+        TenantThreads.setTenantId(tenantId);
+        var configuracao = repository.save(umaConfiguracao("https://example.com/logo.png", "Nome Público"));
+
+        final var request = get("/configuracoes-usuario/public/" + tenantId)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.logoUrl").value("https://example.com/logo.png"))
+                .andExpect(jsonPath("$.name").value("Nome Público"))
+                .andExpect(jsonPath("$.id").doesNotExist())
+                .andExpect(jsonPath("$.dataCriacao").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 quando tenant não existe no endpoint público")
+    void deveRetornar400QuandoTenantNaoExiste() throws Exception {
+        final var request = get("/configuracoes-usuario/public/tenant-inexistente")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isBadRequest());
     }
 }
 
