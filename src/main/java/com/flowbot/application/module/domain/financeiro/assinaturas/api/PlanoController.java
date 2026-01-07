@@ -5,7 +5,9 @@ import com.flowbot.application.module.domain.financeiro.assinaturas.PeriodoPlano
 import com.flowbot.application.module.domain.financeiro.assinaturas.PlanoAtivoOutput;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.AcessoOutputDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.CriarPlanoInputDto;
+import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.PlanoMultiTenantOutputDto;
 import com.flowbot.application.module.domain.financeiro.assinaturas.api.dto.RegistarAcessoDto;
+import com.flowbot.application.module.domain.financeiro.assinaturas.useCase.BuscarAssinaturaTodosTenantsUseCase;
 import com.flowbot.application.module.domain.financeiro.assinaturas.useCase.CriarPlanoUseCase;
 import com.flowbot.application.module.domain.financeiro.assinaturas.useCase.GerenciamentoDoPlanoUseCase;
 import org.springframework.http.HttpHeaders;
@@ -20,11 +22,14 @@ public class PlanoController {
 
     private final CriarPlanoUseCase criarPlanoUseCase;
     private final GerenciamentoDoPlanoUseCase gerenciamentoDoPlanoUseCase;
+    private final BuscarAssinaturaTodosTenantsUseCase buscarAssinaturaTodosTenantsUseCase;
 
     public PlanoController(CriarPlanoUseCase criarPlanoUseCase,
-                           GerenciamentoDoPlanoUseCase gerenciamentoDoPlanoUseCase) {
+                           GerenciamentoDoPlanoUseCase gerenciamentoDoPlanoUseCase,
+                           BuscarAssinaturaTodosTenantsUseCase buscarAssinaturaTodosTenantsUseCase) {
         this.criarPlanoUseCase = criarPlanoUseCase;
         this.gerenciamentoDoPlanoUseCase = gerenciamentoDoPlanoUseCase;
+        this.buscarAssinaturaTodosTenantsUseCase = buscarAssinaturaTodosTenantsUseCase;
     }
 
     @GetMapping("/vigente")
@@ -79,5 +84,10 @@ public class PlanoController {
     public ResponseEntity<Void> solicitarReembolso(@RequestParam String email) {
         gerenciamentoDoPlanoUseCase.processarReembolso(email);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/buscar-todos-tenants")
+    public List<PlanoMultiTenantOutputDto> buscarAssinaturaTodosTenants(@RequestParam String email) {
+        return buscarAssinaturaTodosTenantsUseCase.buscarAssinaturaPorEmail(email);
     }
 }
