@@ -175,6 +175,28 @@ class PlanoControllerTest extends E2ETests {
     }
 
     @Test
+    @DisplayName("Deve listar assinaturas ativas com usuario e tempo inscrito ordenado por maior tempo")
+    void listarAssinaturasAtivas() throws Exception {
+        mongoTemplate.dropCollection(Plano.class);
+        mongoTemplate.save(umPlanoMensal("joao@email.com"));
+        mongoTemplate.save(umPlanoMensal("maria@email.com"));
+
+        final var request = get("/plano/assinaturas-ativas")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].usuario").exists())
+                .andExpect(jsonPath("$[0].ativoHa").exists())
+                .andExpect(jsonPath("$[1].usuario").exists())
+                .andExpect(jsonPath("$[1].ativoHa").exists());
+    }
+
+    @Test
     void solicitarReembolso() throws Exception {
         final var email = "john@doe.io";
         mongoTemplate.save(umPlanoMensal(email));
